@@ -7,9 +7,9 @@
     self = [super init];
     if (self) {
         self.dict = _dict;
-        if([dict objectForKey:@"Apps"]){
-            self.appsArray = [[dict objectForKey:@"Apps"] mutableCopy];
-            [dict setObject:appsArray forKey:@"Apps"];
+        if(dict[@"Apps"]){
+            self.appsArray = [dict[@"Apps"] mutableCopy];
+            dict[@"Apps"] = appsArray;
         }
         self.delegate = self;
     }
@@ -24,21 +24,21 @@
 }
 
 - (void)loadGrid{
-    ROWS = [dict objectForKey:@"Rows"]?[[dict objectForKey:@"Rows"] intValue]:9999;
-    COLS = [dict objectForKey:@"Cols"]?[[dict objectForKey:@"Cols"] intValue]:9999;
-    GAPX = [[dict objectForKey:@"GapX"] intValue];
-    GAPY = [[dict objectForKey:@"GapY"] intValue];
-    if([dict objectForKey:@"PageGapX"] && [dict objectForKey:@"PageGapY"]){
-        PAGEGAPX = [[dict objectForKey:@"PageGapX"] intValue];
-        PAGEGAPY = [[dict objectForKey:@"PalpageGapY"] intValue];
+    ROWS = dict[@"Rows"]?[dict[@"Rows"] intValue]:9999;
+    COLS = dict[@"Cols"]?[dict[@"Cols"] intValue]:9999;
+    GAPX = [dict[@"GapX"] intValue];
+    GAPY = [dict[@"GapY"] intValue];
+    if(dict[@"PageGapX"] && dict[@"PageGapY"]){
+        PAGEGAPX = [dict[@"PageGapX"] intValue];
+        PAGEGAPY = [dict[@"PalpageGapY"] intValue];
     }else
-        PAGEGAPY = [[dict objectForKey:@"PageHeight"] intValue];
+        PAGEGAPY = [dict[@"PageHeight"] intValue];
     
     
     int NUM = ROWS*COLS,
-    ICONW = [[dict objectForKey:@"IconWidth"] intValue],
-    ICONH = [[dict objectForKey:@"IconHeight"] intValue];
-    BOOL allApps = [[dict objectForKey:@"AllApps"] boolValue];
+    ICONW = [dict[@"IconWidth"] intValue],
+    ICONH = [dict[@"IconHeight"] intValue];
+    BOOL allApps = [dict[@"AllApps"] boolValue];
     
     int maxX = 0;
     int maxY = 0;
@@ -47,7 +47,7 @@
         for(int r  = 0; r<ROWS && i<theArray.count; r++)
             for(int c = 0; c<COLS && i<theArray.count; c++, i++){
                 DBAppIcon *appIcon = [[DBAppIcon alloc] init];
-                appIcon.application = allApps?[theArray objectAtIndex:i]:[DBGrid find:[theArray objectAtIndex:i]];
+                appIcon.application = allApps?theArray[i]:[DBGrid find:theArray[i]];
                 appIcon.badgeImage = badgeImage;
                 appIcon.overlayImage = overlayImage;
                 appIcon.shadowImage = shadowImage;
@@ -57,8 +57,7 @@
                 appIcon.cacheHeight = ICONH;
                 appIcon.grid = self;
                 appIcon.tag = i;
-                appIcon.labelStyle = [dict objectForKey:@"LabelStyle"];
-                //[appIcon loadIcon:NO shouldCache:NO];
+                appIcon.labelStyle = dict[@"LabelStyle"];
                 maxX = MAX(maxX, c*GAPX + i/NUM*PAGEGAPX);
                 maxY = MAX(maxY, r*GAPY + i/NUM*PAGEGAPY);
                 appIcon.frame = CGRectMake(c*GAPX + i/NUM*PAGEGAPX, r*GAPY + i/NUM*PAGEGAPY , ICONW, ICONH);
@@ -74,7 +73,7 @@
         if([view isKindOfClass:[DBAppIcon class]]){
             if(CGRectIntersectsRect(rect, view.frame)){
                 if(!((DBAppIcon*)view).loaded)
-                    [(DBAppIcon*)view loadIcon:[DreamBoard sharedInstance].dbtheme.isEditing&&![[dict objectForKey:@"AllApps"] boolValue] shouldCache:NO];
+                    [(DBAppIcon*)view loadIcon:[DreamBoard sharedInstance].dbtheme.isEditing&&![dict[@"AllApps"] boolValue] shouldCache:NO];
             }else if(((DBAppIcon*)view).loaded)
                 [(DBAppIcon*)view unloadIcon];
         }
@@ -95,23 +94,15 @@
         [self unloadAll];
 }
 
-/*- (void)setAlpha:(CGFloat)alpha{
-    [super setAlpha:alpha];
-    if(alpha == 0 || !self.userInteractionEnabled)
-        [self unloadAll];
-    else
-        [self scrollViewDidScroll:nil];
-}*/
-
 
 -(void)addTo:(NSString *)bundle sender:(DBAppIcon *)sender{
-    if(![[dict objectForKey:@"AllApps"] boolValue])
-        [appsArray replaceObjectAtIndex:sender.tag withObject:bundle];
+    if(![dict[@"AllApps"] boolValue])
+        appsArray[sender.tag] = bundle;
 }
 
 -(void)doActions{
-    if([dict objectForKey:@"Actions"])
-        [DBActionParser parseActionArray:[dict objectForKey:@"Actions"]];
+    if(dict[@"Actions"])
+        [DBActionParser parseActionArray:dict[@"Actions"]];
 }
 
 @end

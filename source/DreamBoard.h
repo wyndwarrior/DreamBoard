@@ -13,7 +13,6 @@
     //set of hidden apps
     NSMutableSet *hiddenSet;
     
-    //theme preferences
     NSMutableDictionary *prefsDict;
     NSMutableDictionary *prefsPath;
     
@@ -21,8 +20,6 @@
     
     ExposeSwitcher *switcher;
     UIWindow *window;
-    
-    //DBTheme *dbtheme;
     
     BOOL isEditing;
     
@@ -61,11 +58,9 @@
 -(void)showSwitcher;
 -(void)toggleSwitcher;
 
-//start/stop editing
 -(void)startEditing;
 -(void)stopEditing;
 
-//update badges
 -(void)updateBadgeForApp:(NSString*)leafIdentifier;
 
 //load theme, if Default then unloads theme

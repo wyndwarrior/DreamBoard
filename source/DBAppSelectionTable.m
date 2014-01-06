@@ -9,7 +9,6 @@
 	[self addSubview:_tableView];
 	_delegate = delegate;
 	tableData = data;
-	//[tableView release];
 	UINavigationBar *bar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 44)];
 	UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" 
 																	style:UIBarButtonItemStyleBordered target:self action:@selector(cancel)];
@@ -35,8 +34,8 @@
 	if (cell == nil)
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     NSUInteger row = [indexPath row];
-    cell.textLabel.text = [[tableData objectAtIndex:row] displayName];
-    cell.detailTextLabel.text = [[tableData objectAtIndex:row] leafIdentifier];
+    cell.textLabel.text = [tableData[row] displayName];
+    cell.detailTextLabel.text = [tableData[row] leafIdentifier];
     cell.textLabel.font = [UIFont boldSystemFontOfSize:20];
     cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:10];
     return cell;
@@ -46,9 +45,8 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSUInteger row = [indexPath row];
-    NSString *rowValue = [[tableData objectAtIndex:row] leafIdentifier];
+    NSString *rowValue = [tableData[row] leafIdentifier];
 	[_delegate addTo:rowValue];
-	//NSLog(rowValue);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 	[self removeFromSuperview];
 }

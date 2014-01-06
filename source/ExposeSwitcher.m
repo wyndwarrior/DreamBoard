@@ -38,12 +38,12 @@ static const int NUM  = 9;
     if(![[NSFileManager defaultManager] fileExistsAtPath:cachePath])
         [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:nil];
     for(int i =0; i<(int)ray.count; i++){
-        NSString *path1 = [NSString stringWithFormat:@"%@/%@/Preview.png", scanPath, [ray objectAtIndex:i]];
-        NSString *path2 = [NSString stringWithFormat:@"%@/%@.timestamp", cachePath, [ray objectAtIndex:i]];
+        NSString *path1 = [NSString stringWithFormat:@"%@/%@/Preview.png", scanPath, ray[i]];
+        NSString *path2 = [NSString stringWithFormat:@"%@/%@.timestamp", cachePath, ray[i]];
         if(![[NSFileManager defaultManager] fileExistsAtPath:path1])continue;
         if([[NSFileManager defaultManager] fileExistsAtPath:path2]){
             NSString *stamp = [NSString stringWithContentsOfFile:path2 encoding:NSUTF8StringEncoding error:nil];
-            NSString *newstamp = [NSString stringWithFormat:@"%f",[(NSDate*)[[[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil] objectForKey:@"NSFileModificationDate"] timeIntervalSince1970]];
+            NSString *newstamp = [NSString stringWithFormat:@"%f",[(NSDate*)[[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil][@"NSFileModificationDate"] timeIntervalSince1970]];
             if([stamp isEqualToString:newstamp])continue;
         }
         UIImageView *temp = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,width,height)];
@@ -54,9 +54,9 @@ static const int NUM  = 9;
             [[temp layer] renderInContext:UIGraphicsGetCurrentContext()];
             UIImage* viewImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
-            [UIImagePNGRepresentation(viewImage) writeToFile:[NSString stringWithFormat:@"%@/%@%@.png", cachePath, [ray objectAtIndex:i], (j==0?@"":@"@2x")] atomically:YES];
+            [UIImagePNGRepresentation(viewImage) writeToFile:[NSString stringWithFormat:@"%@/%@%@.png", cachePath, ray[i], (j==0?@"":@"@2x")] atomically:YES];
         }
-        NSString *newstamp = [NSString stringWithFormat:@"%f",[(NSDate*)[[[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil] objectForKey:@"NSFileModificationDate"] timeIntervalSince1970]];
+        NSString *newstamp = [NSString stringWithFormat:@"%f",[(NSDate*)[[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil][@"NSFileModificationDate"] timeIntervalSince1970]];
         [newstamp writeToFile:path2 atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
 }
@@ -78,9 +78,9 @@ static const int NUM  = 9;
     
     int index = 0;
 	for(int i = 0; i<(int)ray.count; i++)
-		if([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@/Info.plist", scanPath, [ray objectAtIndex:i]]]){
-            if([[ray objectAtIndex:i] isEqualToString:current]) index = (int)switcherObjects.count;
-            ExposeSwitcherObject *object = [[ExposeSwitcherObject alloc] initWithName:[ray objectAtIndex:i]];
+		if([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@/Info.plist", scanPath, ray[i]]]){
+            if([ray[i] isEqualToString:current]) index = (int)switcherObjects.count;
+            ExposeSwitcherObject *object = [[ExposeSwitcherObject alloc] initWithName:ray[i]];
             [switcherObjects addObject:object];
         }
     
@@ -99,7 +99,7 @@ static const int NUM  = 9;
     shadow.image = [UIImage imageWithContentsOfFile:shadowPath];
     
     previewImage = [[UIImageView alloc] initWithFrame:bounds];
-    previewImage.image = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/%@/Preview.png", scanPath, [[switcherObjects objectAtIndex:index] name]]];
+    previewImage.image = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/%@/Preview.png", scanPath, [switcherObjects[index] name]]];
     previewImage.alpha = 0;
     previewImage.tag = index;
     
@@ -121,14 +121,14 @@ static const int NUM  = 9;
                 
                 CGRect frame = CGRectMake(x[r][c] + i/NUM*bounds.size.width,
                                           y[r][c], width, height);
-                [[switcherObjects objectAtIndex:i] setFrame:frame];
-                [[switcherObjects objectAtIndex:i] setIndex:i];
-                [[switcherObjects objectAtIndex:i] setRow:r];
-                [[switcherObjects objectAtIndex:i] setCol:c];
-                [mainScrollView addSubview:[switcherObjects objectAtIndex:i]];
+                [switcherObjects[i] setFrame:frame];
+                [switcherObjects[i] setIndex:i];
+                [switcherObjects[i] setRow:r];
+                [switcherObjects[i] setCol:c];
+                [mainScrollView addSubview:switcherObjects[i]];
             }
     
-    ExposeSwitcherObject *theme = [switcherObjects objectAtIndex:index];
+    ExposeSwitcherObject *theme = switcherObjects[index];
     int r = theme.row;
     int c = theme.col;
     mainScrollView.contentOffset = CGPointMake(index/NUM*bounds.size.width,0);
@@ -174,7 +174,7 @@ static const int NUM  = 9;
         [UIView setAnimationDuration:.75];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
-        ExposeSwitcherObject* theme = [switcherObjects objectAtIndex:previewImage.tag];
+        ExposeSwitcherObject* theme = switcherObjects[previewImage.tag];
         int r = [theme row];
         int c = [theme col];
         previewImage.frame = CGRectMake(x[r][c],y[r][c],width,height);
@@ -207,7 +207,7 @@ static const int NUM  = 9;
         background.hidden = YES;
         mainScrollView.hidden = YES;
         if ([delegate respondsToSelector:@selector(didSelectObject:view:)])
-            [delegate didSelectObject:[[switcherObjects objectAtIndex:previewImage.tag] name] view:self];
+            [delegate didSelectObject:[switcherObjects[previewImage.tag] name] view:self];
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:.5];
         [UIView setAnimationDelegate:self]; 
@@ -236,7 +236,6 @@ static const int NUM  = 9;
 
 - (void)dealloc
 {
-    //sharedInstance = nil;
     shadowImage = nil;
 }
 

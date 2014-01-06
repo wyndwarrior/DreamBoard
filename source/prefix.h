@@ -15,6 +15,8 @@
 
 #define TARGET_THEOS 1
 
+#define _alert(x) 
+
 #define FMAN [NSFileManager defaultManager]
 static inline bool dirExists(NSString * path){
     BOOL b;
@@ -55,7 +57,7 @@ static inline bool fileExists(NSString * path){
 #import "Headers/UIKeyboard.h"
 static inline NSString* documents(){
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *documentsDirectory = paths[0];
     return documentsDirectory;
 }
 

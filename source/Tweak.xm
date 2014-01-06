@@ -14,7 +14,6 @@
 -(id)initWithApplication:(id)application{
 	self = %orig(application);
     if(!self)return self;
-    //NSLog(@"%@", DreamBoard.sharedInstance.appsArray);
 	if([DreamBoard.sharedInstance.hiddenSet containsObject:[self leafIdentifier]]) return self;
 	int i = 0;
 	for(; i<(int)DreamBoard.sharedInstance.appsArray.count; i++)
@@ -38,7 +37,6 @@
 -(id)init{
     %orig;
     [DreamBoard sharedInstance].cachePath = [NSString stringWithFormat:@"/DreamBoard/_library/Cache/Previews"];
-    //[[NSFileManager defaultManager] removeItemAtPath:[DreamBoard sharedInstance].cachePath error:nil];
     [DreamBoard sharedInstance].scanPath  = [NSString stringWithFormat:@"/DreamBoard"];
     [DreamBoard sharedInstance].backgroundPath = [NSString stringWithFormat:@"/DreamBoard/_library/Images/Background.png"];
     [DreamBoard sharedInstance].shadowPath = [NSString stringWithFormat:@"/DreamBoard/_library/Images/BackgroundShadow.png"];

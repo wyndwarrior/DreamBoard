@@ -9,7 +9,6 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     if (self) {
         themeName = name;
         window = _window;
-        //NSLog(@"%@", dictTheme);
         allAppIcons = [[NSMutableArray alloc] init];
     }
     
@@ -25,7 +24,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     
     NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/Info.plist", MAINPATH, themeName]];
     
-    if((![dict objectForKey:@"Plist"] || ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/%@.plist", MAINPATH, themeName, [dict objectForKey:@"Plist"]]]) && ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, themeName]]){
+    if((!dict[@"Plist"] || ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/%@.plist", MAINPATH, themeName, dict[@"Plist"]]]) && ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, themeName]]){
         [DreamBoard throwRuntimeException:@"Theme plist not found" shouldExit:YES];
         return;
     }
@@ -33,29 +32,29 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     if([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, themeName]])
         dictTheme = [[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, themeName]] mutableCopy];
     else
-        dictTheme = [[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/%@.plist", MAINPATH, themeName, [dict objectForKey:@"Plist"]]] mutableCopy];
+        dictTheme = [[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/%@.plist", MAINPATH, themeName, dict[@"Plist"]]] mutableCopy];
     
-    if([dictTheme objectForKey:@"DynamicViews"]){
-        dictDynViews = [[dictTheme objectForKey:@"DynamicViews"] mutableCopy];
-        [dictTheme setObject:dictDynViews forKey:@"DynamicViews"];
+    if(dictTheme[@"DynamicViews"]){
+        dictDynViews = [dictTheme[@"DynamicViews"] mutableCopy];
+        dictTheme[@"DynamicViews"] = dictDynViews;
     }
     
     dictViews = [[NSMutableDictionary alloc] init];
     
-    if([dictTheme objectForKey:@"Variables"]){
-        dictVars = [[dictTheme objectForKey:@"Variables"] mutableCopy];
-        [dictTheme setObject:dictVars forKey:@"Variables"];
+    if(dictTheme[@"Variables"]){
+        dictVars = [dictTheme[@"Variables"] mutableCopy];
+        dictTheme[@"Variables"] = dictVars;
     }
     
     dictViewsInteraction = [[NSMutableDictionary alloc] init];
     dictViewsToggled = [[NSMutableDictionary alloc] init];
     dictViewsToggledInteraction = [[NSMutableDictionary alloc] init];
     
-    if([dictTheme objectForKey:@"Functions"])
-        functions = [dictTheme objectForKey:@"Functions"];
+    if(dictTheme[@"Functions"])
+        functions = dictTheme[@"Functions"];
     
-    if([dictTheme objectForKey:@"LabelStyle"])
-        labelStyle = [dictTheme objectForKey:@"LabelStyle"];
+    if(dictTheme[@"LabelStyle"])
+        labelStyle = dictTheme[@"LabelStyle"];
     
     if([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Images/Badge.png", MAINPATH, themeName]])
         badgeImage = [[UIImage alloc] initWithContentsOfFile:
@@ -80,19 +79,19 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     mainView = [[UIView alloc] initWithFrame:window.frame];
     mainView.backgroundColor = UIColor.blackColor;
     mainView.clipsToBounds = YES;
-    if([dictTheme objectForKey:@"MainView"]){
-        NSMutableArray *arrayMainView = [[dictTheme objectForKey:@"MainView"] mutableCopy];
+    if(dictTheme[@"MainView"]){
+        NSMutableArray *arrayMainView = [dictTheme[@"MainView"] mutableCopy];
         for(int i = 0; i<(int)arrayMainView.count; i++){
-            NSMutableDictionary *tmp = [[arrayMainView objectAtIndex:i] mutableCopy];
+            NSMutableDictionary *tmp = [arrayMainView[i] mutableCopy];
             UIView *view = [self loadView:tmp];
             [mainView insertSubview:view atIndex:0];
-            [arrayMainView replaceObjectAtIndex:i withObject:tmp];
+            arrayMainView[i] = tmp;
         }
-        [dictTheme setObject:arrayMainView forKey:@"MainView"];
+        dictTheme[@"MainView"] = arrayMainView;
     }
     
-    if([dictTheme objectForKey:@"Onload"]){
-        for(NSString *action in [dictTheme objectForKey:@"Onload"])
+    if(dictTheme[@"Onload"]){
+        for(NSString *action in dictTheme[@"Onload"])
             [DBActionParser parseAction:action];
     }
     
@@ -102,72 +101,57 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 -(UIView *)loadView:(NSMutableDictionary *)dict{
     UIView *view = nil;
     
-    /*if(![dict objectForKey:@"ViewType"]){
-        [DreamBoard throwRuntimeException:@"Missing ViewType" shouldExit:NO];
-        return nil;
-    }*/
     
-	NSString *type = [dict objectForKey:@"ViewType"];
+	NSString *type = dict[@"ViewType"];
 	
-	//check for type
 	if([type isEqualToString:@"ScrollView"])
 	{
-		//create an uiscrollview
 		DBScrollView *temp = [[DBScrollView alloc] init];
 		
-		//content size
-		if([dict objectForKey:@"ContentWidth"] && [dict objectForKey:@"ContentHeight"])
-			[temp setContentSize:CGSizeMake([[dict objectForKey:@"ContentWidth"] floatValue], 
-											[[dict objectForKey:@"ContentHeight"] floatValue])];
+		if(dict[@"ContentWidth"] && dict[@"ContentHeight"])
+			[temp setContentSize:CGSizeMake([dict[@"ContentWidth"] floatValue], 
+											[dict[@"ContentHeight"] floatValue])];
 		
-		//scrollbars
-		if([dict objectForKey:@"VerticalScrollBars"])
-			temp.showsVerticalScrollIndicator = [[dict objectForKey:@"VerticalScrollBars"] boolValue];
-		if([dict objectForKey:@"HorizontalScrollBars"])
-			temp.showsHorizontalScrollIndicator = [[dict objectForKey:@"HorizontalScrollBars"] boolValue];
+		if(dict[@"VerticalScrollBars"])
+			temp.showsVerticalScrollIndicator = [dict[@"VerticalScrollBars"] boolValue];
+		if(dict[@"HorizontalScrollBars"])
+			temp.showsHorizontalScrollIndicator = [dict[@"HorizontalScrollBars"] boolValue];
 		
-		//scrolling enabled
-		if([dict objectForKey:@"ScrollingEnabled"])
-			temp.scrollEnabled = [[dict objectForKey:@"ScrollingEnabled"] boolValue];
+		if(dict[@"ScrollingEnabled"])
+			temp.scrollEnabled = [dict[@"ScrollingEnabled"] boolValue];
         
-		//recursively add subviews
-		if([dict objectForKey:@"Subviews"]){
-			NSMutableArray *ray = [[dict objectForKey:@"Subviews"] mutableCopy];
+		if(dict[@"Subviews"]){
+			NSMutableArray *ray = [dict[@"Subviews"] mutableCopy];
 			for(int i = 0; i<(int)ray.count; i++){
-				NSMutableDictionary *tempDict = [[ray objectAtIndex:i] mutableCopy];
+				NSMutableDictionary *tempDict = [ray[i] mutableCopy];
 				UIView *v = [self loadView:tempDict];
 				[temp insertSubview:v atIndex:0];
-				[ray replaceObjectAtIndex:i withObject:tempDict];
+				ray[i] = tempDict;
 			}
-			[dict setObject:ray forKey:@"Subviews"];
+			dict[@"Subviews"] = ray;
 		}
 		
-		//set content offset
-		if([dict objectForKey:@"ContentOffsetX"] && [dict objectForKey:@"ContentOffsetY"])
-			[temp setContentOffset:CGPointMake([[dict objectForKey:@"ContentOffsetX"] floatValue], [[dict objectForKey:@"ContentOffsetY"] floatValue]) animated:NO];
+		if(dict[@"ContentOffsetX"] && dict[@"ContentOffsetY"])
+			[temp setContentOffset:CGPointMake([dict[@"ContentOffsetX"] floatValue], [dict[@"ContentOffsetY"] floatValue]) animated:NO];
 		
-		//set paging
-		if([dict objectForKey:@"Paging"])
-			temp.pagingEnabled = [[dict objectForKey:@"Paging"] boolValue];
+		if(dict[@"Paging"])
+			temp.pagingEnabled = [dict[@"Paging"] boolValue];
         
-        if([dict objectForKey:@"Actions"])
-            temp.actions = [dict objectForKey:@"Actions"];
+        if(dict[@"Actions"])
+            temp.actions = dict[@"Actions"];
         
 		view = temp;
 	}
 	else if([type isEqualToString:@"WebView"])
 	{
-		//create an uiwebdocview
 		UIWebDocumentView *temp = [[UIWebDocumentView alloc] init];
 		
-		//load the request
-		if([dict objectForKey:@"URL"])
+		if(dict[@"URL"])
 			[temp loadRequest:
 			 [NSURLRequest requestWithURL:
 			  [NSURL fileURLWithPath:
-               [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",MAINPATH,[dict objectForKey:@"URL"]]]]]];
+               [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",MAINPATH,dict[@"URL"]]]]]];
         
-		//clear the background
 		[temp setBackgroundColor:[UIColor clearColor]];
 		[temp setOpaque:NO];
 		
@@ -177,13 +161,12 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     {
         DBWebView *temp = [[DBWebView alloc] init];
 
-        if([dict objectForKey:@"URL"])
+        if(dict[@"URL"])
             [temp loadRequest:
              [NSURLRequest requestWithURL:
               [NSURL fileURLWithPath:
-               [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",MAINPATH,[dict objectForKey:@"URL"]]]]]];
+               [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",MAINPATH,dict[@"URL"]]]]]];
 
-        //clear the background
         temp.backgroundColor = [UIColor clearColor];
         temp.opaque = NO;
 
@@ -191,39 +174,34 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     }
 	else if([type isEqualToString:@"ImageView"])
 	{
-		//create an uiimageview
 		UIImageView *temp = [[UIImageView alloc] init];
 		
-		//set the image
-		if([dict objectForKey:@"Image"])
+		if(dict[@"Image"])
 			temp.image = [UIImage imageWithContentsOfFile:
-						  [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",MAINPATH,[dict objectForKey:@"Image"]]]];
+						  [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",MAINPATH,dict[@"Image"]]]];
 		
 		view = temp;
 	}
 	else if([type isEqualToString:@"Button"])
-	{
-		//create a new dreamboard button
-		DBButton *temp = [[DBButton alloc] initWithDict:dict];
+	{		DBButton *temp = [[DBButton alloc] initWithDict:dict];
 		
 		view = temp;
 	}
 	else if([type isEqualToString:@"AppIcon"])
 	{
-		//create a new dreamboard button
 		DBAppIcon *temp = [[DBAppIcon alloc] init];
         
-        temp.application = [self findApp:[dict objectForKey:@"BundleID"]];
+        temp.application = [self findApp:dict[@"BundleID"]];
         temp.dict = dict;
         
         temp.badgeImage = badgeImage;
-        temp.overlayImage = ([dict objectForKey:@"Overlay"]==nil?YES:[[dict objectForKey:@"Overlay"] boolValue])?overlayImage:nil;
-        temp.shadowImage = ([dict objectForKey:@"Shadow"]==nil?YES:[[dict objectForKey:@"Shadow"] boolValue])?shadowImage:nil;
-        temp.maskImage = ([dict objectForKey:@"MaskImage"]==nil?YES:[[dict objectForKey:@"MaskImage"] boolValue])?maskImage:nil;
+        temp.overlayImage = (dict[@"Overlay"]==nil?YES:[dict[@"Overlay"] boolValue])?overlayImage:nil;
+        temp.shadowImage = (dict[@"Shadow"]==nil?YES:[dict[@"Shadow"] boolValue])?shadowImage:nil;
+        temp.maskImage = (dict[@"MaskImage"]==nil?YES:[dict[@"MaskImage"] boolValue])?maskImage:nil;
         temp.editImage = editImage;
-        temp.labelStyle = [dict objectForKey:@"LabelStyle"]==nil?labelStyle:[dict objectForKey:@"LabelStyle"];
-        temp.cacheHeight = [[dict objectForKey:@"FrameHeight"] intValue];
-        temp.cacheWidth = [[dict objectForKey:@"FrameWidth"] intValue];
+        temp.labelStyle = dict[@"LabelStyle"]==nil?labelStyle:dict[@"LabelStyle"];
+        temp.cacheHeight = [dict[@"FrameHeight"] intValue];
+        temp.cacheWidth = [dict[@"FrameWidth"] intValue];
         
         [self setViewDefaults:temp withDict:dict];
         
@@ -233,7 +211,6 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 	}
 	else if([type isEqualToString:@"AppGrid"])
 	{
-		//create a new dreamboard grid
 		DBGrid *temp = [[DBGrid alloc] initWithDict:dict];
         [self setViewDefaults:temp withDict:dict];
         temp.badgeImage = badgeImage;
@@ -242,31 +219,28 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
         temp.maskImage = maskImage;
         temp.editImage = editImage;
         [temp loadGrid];
-        if([dict objectForKey:@"ScrollingEnabled"])
-			temp.scrollEnabled = [[dict objectForKey:@"ScrollingEnabled"] boolValue];
-        if([dict objectForKey:@"Paging"])
-			temp.pagingEnabled = [[dict objectForKey:@"Paging"] boolValue];
+        if(dict[@"ScrollingEnabled"])
+			temp.scrollEnabled = [dict[@"ScrollingEnabled"] boolValue];
+        if(dict[@"Paging"])
+			temp.pagingEnabled = [dict[@"Paging"] boolValue];
 		view = temp;
 	}
 	else
 	{
-		//create a regular uiview
 		view = [[UIView alloc] init];
 		
-		//recursively add subviews
-		if([dict objectForKey:@"Subviews"]){
-			NSMutableArray *ray = [[dict objectForKey:@"Subviews"] mutableCopy];
+		if(dict[@"Subviews"]){
+			NSMutableArray *ray = [dict[@"Subviews"] mutableCopy];
 			for(int i = 0; i<(int)ray.count; i++){
-				NSMutableDictionary *tempDict = [[ray objectAtIndex:i] mutableCopy];
+				NSMutableDictionary *tempDict = [ray[i] mutableCopy];
 				UIView *v = [self loadView:tempDict];
 				[view insertSubview:v atIndex:0];
-				[ray replaceObjectAtIndex:i withObject:tempDict];
+				ray[i] = tempDict;
 			}
-			[dict setObject:ray forKey:@"Subviews"];
+			dict[@"Subviews"] = ray;
 		}
 	}
 	
-	//set univeral uiview settings
 	[self setViewDefaults:view withDict:dict];
 	
 	return view;
@@ -274,57 +248,54 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 
 -(void)setViewDefaults:(UIView *)view withDict:(NSDictionary *)dict{
     CGRect frame = CGRectMake(0,0,0,0);
-	if([dict objectForKey:@"FrameWidth"])
-		frame.size.width = [[dict objectForKey:@"FrameWidth"] floatValue];
+	if(dict[@"FrameWidth"])
+		frame.size.width = [dict[@"FrameWidth"] floatValue];
 	
-	if([dict objectForKey:@"FrameHeight"])
-		frame.size.height = [[dict objectForKey:@"FrameHeight"] floatValue];
+	if(dict[@"FrameHeight"])
+		frame.size.height = [dict[@"FrameHeight"] floatValue];
 	
-	if([dict objectForKey:@"FrameX"])
-		frame.origin.x = [[dict objectForKey:@"FrameX"] floatValue];
+	if(dict[@"FrameX"])
+		frame.origin.x = [dict[@"FrameX"] floatValue];
 	
-	if([dict objectForKey:@"FrameY"])
-		frame.origin.y = [[dict objectForKey:@"FrameY"] floatValue];
+	if(dict[@"FrameY"])
+		frame.origin.y = [dict[@"FrameY"] floatValue];
     
-    if([dict objectForKey:@"Frame"]){
-        NSArray *ray= [[dict objectForKey:@"Frame"] componentsSeparatedByString:@","];
-        frame = CGRectMake([[ray objectAtIndex:0] floatValue], 
-                           [[ray objectAtIndex:1] floatValue], 
-                           [[ray objectAtIndex:2] floatValue], 
-                           [[ray objectAtIndex:3] floatValue]);
+    if(dict[@"Frame"]){
+        NSArray *ray= [dict[@"Frame"] componentsSeparatedByString:@","];
+        frame = CGRectMake([ray[0] floatValue], 
+                           [ray[1] floatValue], 
+                           [ray[2] floatValue], 
+                           [ray[3] floatValue]);
     }
 	
 	view.frame = frame;
 	
-	//set user interaction
-	if([dict objectForKey:@"UserInteraction"])
-		view.userInteractionEnabled = [[dict objectForKey:@"UserInteraction"] boolValue];
+	if(dict[@"UserInteraction"])
+		view.userInteractionEnabled = [dict[@"UserInteraction"] boolValue];
 	
-	//set alpha
-	if([dict objectForKey:@"Alpha"])
-		view.alpha = [[dict objectForKey:@"Alpha"] floatValue];
+	if(dict[@"Alpha"])
+		view.alpha = [dict[@"Alpha"] floatValue];
 	
-	//set clip to bounds
-	if([dict objectForKey:@"ClipToBounds"])
-		view.clipsToBounds = [[dict objectForKey:@"ClipToBounds"] boolValue];
+	if(dict[@"ClipToBounds"])
+		view.clipsToBounds = [dict[@"ClipToBounds"] boolValue];
     
-    if([dict objectForKey:@"Rotation"])
-        view.transform = CGAffineTransformMakeRotation([[dict objectForKey:@"Rotation"] intValue]*M_PI/180.);
+    if(dict[@"Rotation"])
+        view.transform = CGAffineTransformMakeRotation([dict[@"Rotation"] intValue]*M_PI/180.);
     
-    if([dict objectForKey:@"Scale"])
-        view.transform = CGAffineTransformMakeScale([[dict objectForKey:@"Scale"] floatValue], [[dict objectForKey:@"Scale"] floatValue]);
+    if(dict[@"Scale"])
+        view.transform = CGAffineTransformMakeScale([dict[@"Scale"] floatValue], [dict[@"Scale"] floatValue]);
     
-    if([dict objectForKey:@"id"]){
-        NSString *ID = [dict objectForKey:@"id"];
-        [dictViews setObject:view forKey:ID];
-        if([dict objectForKey:@"UserInteraction"])
-            [dictViewsInteraction setObject:[dict objectForKey:@"UserInteraction"] forKey:ID];
+    if(dict[@"id"]){
+        NSString *ID = dict[@"id"];
+        dictViews[ID] = view;
+        if(dict[@"UserInteraction"])
+            dictViewsInteraction[ID] = dict[@"UserInteraction"];
         else
-            [dictViewsInteraction setObject:[NSNumber numberWithBool:YES] forKey:ID];
-        if([dict objectForKey:@"Toggled"]){
-            [dictViewsToggled setObject:[dict objectForKey:@"Toggled"] forKey:ID];
-            if([dict objectForKey:@"ToggledInteraction"])
-                [dictViewsToggledInteraction setObject:[dict objectForKey:@"ToggledInteraction"] forKey:ID];
+            dictViewsInteraction[ID] = @YES;
+        if(dict[@"Toggled"]){
+            dictViewsToggled[ID] = dict[@"Toggled"];
+            if(dict[@"ToggledInteraction"])
+                dictViewsToggledInteraction[ID] = dict[@"ToggledInteraction"];
         }
     }
 }
@@ -339,14 +310,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 - (void)dealloc
 {
     isDealloc = YES;
-    
-    
-    
-    
-    
     [mainView removeFromSuperview];
-    
-    
 }
 
 -(void)savePlist{
@@ -355,15 +319,15 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 
 -(void)cacheIfNeeded{
     NSMutableArray *grids = [[NSMutableArray alloc] init];
-    if([dictTheme objectForKey:@"MainView"])
-    for(NSDictionary *dict in [dictTheme objectForKey:@"MainView"])
+    if(dictTheme[@"MainView"])
+    for(NSDictionary *dict in dictTheme[@"MainView"])
         [self getGrids:grids dict:dict];
-    if([dictTheme objectForKey:@"DynamicViews"])
-    for(NSString *str in [dictTheme objectForKey:@"DynamicViews"])
-        [self getGrids:grids dict:[[dictTheme objectForKey:@"DynamicViews"] objectForKey:str]];
+    if(dictTheme[@"DynamicViews"])
+    for(NSString *str in dictTheme[@"DynamicViews"])
+        [self getGrids:grids dict:dictTheme[@"DynamicViews"][str]];
     for(NSDictionary *dict in grids)
         for(id app in [DreamBoard sharedInstance].appsArray)
-            if(![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@-%dx%d.png", [DBAppIcon cacheLocation], [app leafIdentifier], [[dict objectForKey:@"IconWidth"] intValue], [[dict objectForKey:@"IconHeight"] intValue]]]){
+            if(![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@-%dx%d.png", [DBAppIcon cacheLocation], [app leafIdentifier], [dict[@"IconWidth"] intValue], [dict[@"IconHeight"] intValue]]]){
                 @autoreleasepool {
                     DBAppIcon *temp = [[DBAppIcon alloc] init];
                     
@@ -373,10 +337,10 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
                     temp.shadowImage = shadowImage;
                     temp.maskImage = maskImage;
                     temp.editImage = editImage;
-                    temp.labelStyle = [dict objectForKey:@"LabelStyle"]==nil?labelStyle:[dict objectForKey:@"LabelStyle"];
-                    temp.cacheHeight = [[dict objectForKey:@"IconHeight"] intValue];
-                    temp.cacheWidth = [[dict objectForKey:@"IconWidth"] intValue];
-                    temp.frame = CGRectMake(0, 0, [[dict objectForKey:@"IconWidth"] intValue], [[dict objectForKey:@"IconHeight"] intValue]);
+                    temp.labelStyle = dict[@"LabelStyle"]==nil?labelStyle:dict[@"LabelStyle"];
+                    temp.cacheHeight = [dict[@"IconHeight"] intValue];
+                    temp.cacheWidth = [dict[@"IconWidth"] intValue];
+                    temp.frame = CGRectMake(0, 0, [dict[@"IconWidth"] intValue], [dict[@"IconHeight"] intValue]);
                     [temp loadIcon:NO shouldCache:YES];
                 
                 }
@@ -386,23 +350,23 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 }
 
 -(void)getGrids:(NSMutableArray *)ray dict:(NSDictionary *)dict{
-    if([[dict objectForKey:@"ViewType"] isEqualToString:@"AppGrid"])
+    if([dict[@"ViewType"] isEqualToString:@"AppGrid"])
         [ray addObject:dict];
-    else if([dict objectForKey:@"Subviews"])
-        for(NSDictionary *_dict in [dict objectForKey:@"Subviews"])
+    else if(dict[@"Subviews"])
+        for(NSDictionary *_dict in dict[@"Subviews"])
             [self getGrids:ray dict:_dict];
 }
 
 -(void)didUndim:(id)awayView{
-    if([dictTheme objectForKey:@"LockView"] && !lockView){
+    if(dictTheme[@"LockView"] && !lockView){
         lockView = [[DBLockView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         lockView.backgroundColor = UIColor.blackColor;
         lockView.delegate = self;
-        NSMutableArray *temp = [[dictTheme objectForKey:@"LockView"] mutableCopy];
-        [dictTheme setObject:temp forKey:@"LockView"];
+        NSMutableArray *temp = [dictTheme[@"LockView"] mutableCopy];
+        dictTheme[@"LockView"] = temp;
         for(int i = 0; i<(int)temp.count; i++){
-            NSMutableDictionary *tempDict = [[temp objectAtIndex:i] mutableCopy];
-            [temp replaceObjectAtIndex:i withObject:tempDict];
+            NSMutableDictionary *tempDict = [temp[i] mutableCopy];
+            temp[i] = tempDict;
             UIView *tempView = [self loadView:tempDict];
             [lockView insertSubview:tempView atIndex:0];
         }

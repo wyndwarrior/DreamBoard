@@ -8,27 +8,24 @@ static DreamBoard *sharedInstance;
 {
     self = [super init];
     if (self) {
-        //initialization
         appsArray = [[NSMutableArray alloc] init];
         hiddenSet = [[NSMutableSet alloc] init];
         
-        //get hidden apps
         {
             NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/LibHide/hidden.plist"];
-            NSArray *hideMe = [NSArray arrayWithObjects: @"com.apple.AdSheetPhone", @"com.apple.DataActivation", @"com.apple.DemoApp", @"com.apple.iosdiagnostics", @"com.apple.iphoneos.iPodOut", @"com.apple.TrustMe", @"com.apple.WebSheet", nil];
+            NSArray *hideMe = @[@"com.apple.AdSheetPhone", @"com.apple.DataActivation", @"com.apple.DemoApp", @"com.apple.iosdiagnostics", @"com.apple.iphoneos.iPodOut", @"com.apple.TrustMe", @"com.apple.WebSheet"];
             [hiddenSet addObjectsFromArray:hideMe];
-            if(dict && [dict objectForKey:@"Hidden"]){
-                [hiddenSet addObjectsFromArray:[dict objectForKey:@"Hidden"]];
+            if(dict && dict[@"Hidden"]){
+                [hiddenSet addObjectsFromArray:dict[@"Hidden"]];
             }
         }
         
-        //load prefs
         {
             prefsPath = [[NSMutableDictionary alloc] init];
 
-            [prefsPath setObject:@"/var/mobile/Library/Preferences/com.wynd.dreamboard.plist" forKey:@"Path"];
+            prefsPath[@"Path"] = @"/var/mobile/Library/Preferences/com.wynd.dreamboard.plist";
             
-            NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:[prefsPath objectForKey:@"Path"]];
+            NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:prefsPath[@"Path"]];
             if(dict){
                 prefsDict = [dict mutableCopy];
             }
@@ -36,7 +33,7 @@ static DreamBoard *sharedInstance;
             if( !prefsDict )
                 prefsDict = [NSMutableDictionary dictionary];
             
-            [prefsPath setObject:prefsDict forKey:@"Prefs"];
+            prefsPath[@"Prefs"] = prefsDict;
         }
     }
     
@@ -44,7 +41,6 @@ static DreamBoard *sharedInstance;
 }
 
 +(DreamBoard*)sharedInstance{
-    //create a new shared instance, if not already created
     if(!sharedInstance)sharedInstance = [[DreamBoard alloc] init];
     return sharedInstance;
 }
@@ -53,7 +49,6 @@ static DreamBoard *sharedInstance;
 
 -(void)show{
     window.userInteractionEnabled = NO;
-    //add switcher, make sure the window is visible
     switcher = [[ExposeSwitcher alloc] init];
     switcher.cachePath = cachePath;
     switcher.scanPath  = scanPath;
@@ -82,7 +77,6 @@ static DreamBoard *sharedInstance;
 
 -(void)addSwitcher{
     [switcher updateCache];
-    //[loading removeFromSuperview];
     [window addSubview:switcher.view];
     [loading hide];
 }
@@ -99,11 +93,11 @@ static DreamBoard *sharedInstance;
 
 -(void)didFadeOut:(ExposeSwitcher *)view{
     [self hideAllExcept:view.view];
-    if(![[[prefsPath objectForKey:@"Prefs"] objectForKey:@"Launched"] boolValue]){
+    if(![prefsPath[@"Prefs"][@"Launched"] boolValue]){
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Welcome" message:@"Welcome to Dreamboard! Tap on any theme to switch to it. Tap and hold on any theme to see more options." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
-        [[prefsPath objectForKey:@"Prefs"] setObject:[NSNumber numberWithBool:YES] forKey:@"Launched"];
-        [[prefsPath objectForKey:@"Prefs"] writeToFile:[prefsPath objectForKey:@"Path"] atomically:YES];
+        prefsPath[@"Prefs"][@"Launched"] = @YES;
+        [prefsPath[@"Prefs"] writeToFile:prefsPath[@"Path"] atomically:YES];
     }
 }
 
@@ -128,10 +122,10 @@ static DreamBoard *sharedInstance;
     NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/Info.plist", MAINPATH, object.name]];
     if(!dict)return;
     UIAlertView *alert;
-    if([dict objectForKey:@"NoneEditable"]!=nil&&[[dict objectForKey:@"NoneEditable"] boolValue])
-        alert = [[UIAlertView alloc] initWithTitle:object.name message:[dict objectForKey:@"Description"] delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    if(dict[@"NoneEditable"]!=nil&&[dict[@"NoneEditable"] boolValue])
+        alert = [[UIAlertView alloc] initWithTitle:object.name message:dict[@"Description"] delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
     else
-        alert = [[UIAlertView alloc] initWithTitle:object.name message:[dict objectForKey:@"Description"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Edit", @"Reset", nil];
+        alert = [[UIAlertView alloc] initWithTitle:object.name message:dict[@"Description"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Edit", @"Reset", nil];
     [alert show];
 }
 
@@ -205,8 +199,8 @@ static DreamBoard *sharedInstance;
         //if there is already a theme, unload it
         if(currentTheme)
             [self unloadTheme];
-        [[prefsPath objectForKey:@"Prefs"] setObject:theme forKey:@"Current Theme"];
-        [[prefsPath objectForKey:@"Prefs"] writeToFile:[prefsPath objectForKey:@"Path"] atomically:YES];
+        prefsPath[@"Prefs"][@"Current Theme"] = theme;
+        [prefsPath[@"Prefs"] writeToFile:prefsPath[@"Path"] atomically:YES];
         return;
     }
     if(dbtheme)[self unloadTheme];
@@ -215,8 +209,8 @@ static DreamBoard *sharedInstance;
     if(isEditing)
     dbtheme.isEditing = YES;
     [dbtheme loadTheme];
-    [[prefsPath objectForKey:@"Prefs"] setObject:theme forKey:@"Current Theme"];
-    [[prefsPath objectForKey:@"Prefs"] writeToFile:[prefsPath objectForKey:@"Path"] atomically:YES];
+    prefsPath[@"Prefs"][@"Current Theme"] = theme;
+    [prefsPath[@"Prefs"] writeToFile:prefsPath[@"Path"] atomically:YES];
     //keep track of current theme
 }
 -(void)unloadTheme{
@@ -264,13 +258,13 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)preLoadTheme{
-    if(![[[prefsPath objectForKey:@"Prefs"] objectForKey:@"Current Theme"] isEqualToString:@"Default"])
-        [self loadTheme:[[prefsPath objectForKey:@"Prefs"] objectForKey:@"Current Theme"]];
+    if(![prefsPath[@"Prefs"][@"Current Theme"] isEqualToString:@"Default"])
+        [self loadTheme:prefsPath[@"Prefs"][@"Current Theme"]];
 }
 
 -(void)save:(NSString *)theme{
-    [[prefsPath objectForKey:@"Prefs"] setObject:theme forKey:@"Current Theme"];
-    [[prefsPath objectForKey:@"Prefs"] writeToFile:[prefsPath objectForKey:@"Path"] atomically:YES];
+    prefsPath[@"Prefs"][@"Current Theme"] = theme;
+    [prefsPath[@"Prefs"] writeToFile:prefsPath[@"Path"] atomically:YES];
 }
 
 @end

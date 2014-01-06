@@ -51,13 +51,13 @@ static NSString *cache;
     
     if(application && !hasCache){
         if(labelStyle){
-            CGRect rect = CGRectMake([[labelStyle objectForKey:@"labelX"] intValue],
-                                     [[labelStyle objectForKey:@"labelY"] intValue],
-                                     [[labelStyle objectForKey:@"labelWidth"] intValue],
-                                     [[labelStyle objectForKey:@"labelHeight"] intValue]);
+            CGRect rect = CGRectMake([labelStyle[@"labelX"] intValue],
+                                     [labelStyle[@"labelY"] intValue],
+                                     [labelStyle[@"labelWidth"] intValue],
+                                     [labelStyle[@"labelHeight"] intValue]);
             iconLabel = [[UILabel alloc] initWithFrame:rect];
             iconLabel.font = [UIFont boldSystemFontOfSize:
-                              [[labelStyle objectForKey:@"labelFontSize"] intValue]];
+                              [labelStyle[@"labelFontSize"] intValue]];
             
         }else{
             iconLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,70,60,12)];
@@ -154,10 +154,10 @@ static NSString *cache;
     if(shadowImageView)shadowImageView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
     if(editImageView)editImageView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
     float width, height;
-    if([dict objectForKey:@"IconWidth"] && [dict objectForKey:@"IconHeight"])
+    if(dict[@"IconWidth"] && dict[@"IconHeight"])
     {
-        width = [[dict objectForKey:@"IconWidth"] floatValue];
-        height = [[dict objectForKey:@"IconHeight"] floatValue];
+        width = [dict[@"IconWidth"] floatValue];
+        height = [dict[@"IconHeight"] floatValue];
     }else{
         width = 59; height = 59;
     }
@@ -179,7 +179,7 @@ static NSString *cache;
 
 -(void)addTo:(NSString *)bundle{
     if(dict)
-        [dict setObject:bundle forKey:@"BundleID"];
+        dict[@"BundleID"] = bundle;
     self.application = [DBGrid find:bundle];
     if(loaded){
         [self unloadIcon];
