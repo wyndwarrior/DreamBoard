@@ -2,7 +2,6 @@
 
 #import "DBTheme.h"
 @interface DBLockView : UIView {
-    id delegate;
 }
-@property(nonatomic, assign) id delegate;
+@property(nonatomic, weak) id delegate;
 @end

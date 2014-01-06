@@ -4,14 +4,12 @@
 @synthesize dict, badgeImage, editImage, maskImage, overlayImage, shadowImage, application, labelStyle, loaded, cacheWidth, cacheHeight, grid;
 static NSString *cache;
 -(id)init{
-    [super init];
+    if (!(self = [super init])) return nil;
     if([DreamBoard sharedInstance].dbtheme && [DreamBoard sharedInstance].dbtheme->allAppIcons)
         [[DreamBoard sharedInstance].dbtheme->allAppIcons addObject:self];
     return self;
 }
 +(void)setCacheLocation:(NSString*)_cache{
-    [cache release];
-    [_cache retain];
     cache = _cache;
 }
 
@@ -91,32 +89,26 @@ static NSString *cache;
     loaded = NO;
     if(overlayImageView){
         [overlayImageView removeFromSuperview];
-        [overlayImageView release];
         overlayImageView = nil;
     }
     if(shadowImageView){
         [shadowImageView removeFromSuperview];
-        [shadowImageView release];
         shadowImageView = nil;
     }
     if(iconImageView){
         [iconImageView removeFromSuperview];
-        [iconImageView release];
         iconImageView = nil;
     }
     if(iconButton){
         [iconButton removeFromSuperview];
-        [iconButton release];
         iconButton = nil;
     }
     if(editImageView){
         [editImageView removeFromSuperview];
-        [editImageView release];
         editImageView = nil;
     }
     if(iconLabel){
         [iconLabel removeFromSuperview];
-        [iconLabel release];
         iconLabel = nil;
     }
     if(badge){
@@ -142,11 +134,8 @@ static NSString *cache;
         UIImageView *stretch = [[UIImageView alloc] initWithFrame:CGRectMake(60-(badgeLabel.text.length*5+15),5,badgeLabel.text.length*5+25,30)];
         stretch.image = [badgeImage stretchableImageWithLeftCapWidth:14 topCapHeight:0];
         [badge addSubview:stretch];
-        [stretch release];
         [badge addSubview:badgeLabel];
-        [badgeLabel release];
         [self addSubview:badge];
-        [badge release];
     }
 }
 
@@ -181,7 +170,6 @@ static NSString *cache;
         CGRect bounds = [[UIScreen mainScreen] bounds];
         DBAppSelectionTable *table = [[DBAppSelectionTable alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y+20, bounds.size.width, bounds.size.height-20) data:[DreamBoard sharedInstance].appsArray delegate:self title:(application==nil?@"No Icon":[application displayName])];
         [[DreamBoard sharedInstance].window addSubview:table];
-        [table release];
     }
     else{
         if(grid)[grid doActions];
@@ -209,15 +197,6 @@ static NSString *cache;
 - (void)dealloc
 {
     [self unloadIcon];
-    [dict release];
-    [badgeImage release];
-    [editImage release];
-    [maskImage release];
-    [overlayImage release];
-    [shadowImage release];
-    [application release];
-    [labelStyle release];
-    [super dealloc];
 }
 
 +(UIImage *) maskImage:(UIImage *)image withMask:(UIImage *)maskImage2{

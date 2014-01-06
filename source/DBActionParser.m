@@ -24,18 +24,15 @@
             if(go){
                 BOOL b = [DBActionParser parseActionArray:[[split3 objectAtIndex:0] componentsSeparatedByString:@", "]];
                 if(b){
-                    [splitActions release];
                     return YES;
                 }
             }
             else{ 
                 BOOL b = [DBActionParser parseActionArray:[[split3 objectAtIndex:1] componentsSeparatedByString:@", "]];
                 if(b){
-                    [splitActions release];
                     return YES;
                 }
             }
-            [splitActions release];
             return NO;
         }
         //@end
@@ -207,11 +204,10 @@
         else if([[splitActions objectAtIndex:0] isEqualToString:@"function"])
             [DBActionParser parseActionArray:[dbtheme->functions objectForKey:[splitActions objectAtIndex:1]]];
         else if([[splitActions objectAtIndex:0] isEqualToString:@"insertview"]){
-            if([dbtheme->dictViews objectForKey:[splitActions objectAtIndex:1]]!=nil || [dbtheme->dictDynViews objectForKey:[splitActions objectAtIndex:1]]==nil){[splitActions release]; return NO;}
+            if([dbtheme->dictViews objectForKey:[splitActions objectAtIndex:1]]!=nil || [dbtheme->dictDynViews objectForKey:[splitActions objectAtIndex:1]]==nil){ return NO;}
             NSMutableDictionary *tdict = [[dbtheme->dictDynViews objectForKey:[splitActions objectAtIndex:1]] mutableCopy];
             UIView *v = [dbtheme loadView:tdict];
             [dbtheme->dictDynViews setObject:tdict forKey:[splitActions objectAtIndex:1]];
-            [tdict release];
             UIView *sup = [[splitActions objectAtIndex:3] isEqualToString:@"MainView"]?dbtheme->mainView:[dbtheme->dictViews objectForKey:[splitActions objectAtIndex:3]];
             if([[splitActions objectAtIndex:2] isEqualToString:@"to"])
                 [sup addSubview:v];
@@ -220,11 +216,10 @@
             else
                 [[sup superview] insertSubview:v belowSubview:sup];
             [dbtheme->dictViews setObject:v forKey:[splitActions objectAtIndex:1]];
-            [v release];
         }
         
         else if([[splitActions objectAtIndex:0] isEqualToString:@"removeview"]){
-            if([dbtheme->dictViews objectForKey:[splitActions objectAtIndex:1]]==nil || [dbtheme->dictDynViews objectForKey:[splitActions objectAtIndex:1]]==nil){[splitActions release];return NO;}
+            if([dbtheme->dictViews objectForKey:[splitActions objectAtIndex:1]]==nil || [dbtheme->dictDynViews objectForKey:[splitActions objectAtIndex:1]]==nil){return NO;}
             UIView *v = [dbtheme->dictViews objectForKey:[splitActions objectAtIndex:1]];
             [DBActionParser recurrm:[dbtheme->dictDynViews objectForKey:[splitActions objectAtIndex:1]]];
             [v removeFromSuperview];
@@ -235,11 +230,11 @@
         
         else if([[splitActions objectAtIndex:0] hasPrefix:@"views."])
         {
-            NSArray *tempArray = [[[splitActions objectAtIndex:0] componentsSeparatedByString:@"."] retain];
+            NSArray *tempArray = [[splitActions objectAtIndex:0] componentsSeparatedByString:@"."];
             
             if((int)tempArray.count<3){
                 [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Invalid setter, missing values: %@", action] shouldExit:NO];
-                goto ret;
+                return NO;
             }
             
             NSString *viewName = [tempArray objectAtIndex:1];
@@ -247,7 +242,7 @@
             
             if(![dbtheme->dictViews objectForKey:viewName]){
                 [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"View not found: %@", action] shouldExit:NO];
-                goto ret;
+                return NO;
             }
             
             if((int)splitActions.count==4 && [[splitActions objectAtIndex:3] hasPrefix:@"animated:"]){
@@ -295,18 +290,15 @@
                        [DreamBoard replaceRootDir:[NSString stringWithFormat:@"%@%@",[splitActions objectAtIndex:2], MAINPATH]]]]];
             }else{
                 [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Property not found: %@", action] shouldExit:NO];
-                goto ret;
+                return NO;
             }
             
             if((int)splitActions.count==4 && [[splitActions objectAtIndex:3] hasPrefix:@"animated:"])
                 [UIView commitAnimations];
             
-        ret:
-            [tempArray release];
         }else if([[splitActions objectAtIndex:0] hasPrefix:@"vars."]){
-            NSArray *tempArray = [[[splitActions objectAtIndex:0] componentsSeparatedByString:@"."] retain];
+            NSArray *tempArray = [[splitActions objectAtIndex:0] componentsSeparatedByString:@"."];
             [dbtheme->dictVars setObject:[splitActions objectAtIndex:2] forKey:[tempArray objectAtIndex:1]];
-            [tempArray release];
         }else if([[splitActions objectAtIndex:0] isEqualToString:@"log"])
             system([[NSString stringWithFormat:@"echo \"%@\" >> /DreamBoard/dreamboard.log", [self concatString:splitActions]] UTF8String]);
         else if([[splitActions objectAtIndex:0] isEqualToString:@"startediting"] && ![[DreamBoard sharedInstance] isEditing])
@@ -325,7 +317,6 @@
         
         //@end
         
-        [splitActions release];
     }
     
     
@@ -337,7 +328,6 @@
             NSMutableArray *splitActions = [[b componentsSeparatedByString:@" "] mutableCopy];
             [DBActionParser preParse:splitActions];
             good &= [DBActionParser parseBool:[DBActionParser concatString:splitActions]];
-            [splitActions release];
         }
         
         if(good)[DBActionParser parseActionArray:[action objectForKey:@"then"]];
@@ -381,28 +371,28 @@
     for(int i = 0; i<splitActions.count; i++){
         NSString *temp = [splitActions objectAtIndex:i];
         if([temp hasPrefix:@"get."]){
-            NSArray *tempArray = [[temp componentsSeparatedByString:@"."] retain];
+            NSArray *tempArray = [temp componentsSeparatedByString:@"."];
             
             if(tempArray.count<2){
                 [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Invalid Getter, missing values: %@", temp] shouldExit:NO];
-                goto end;
+                return;
             }
             
             if(![[tempArray objectAtIndex:1] isEqualToString:@"vars"] && ![[tempArray objectAtIndex:1] isEqualToString:@"views"]){
                 [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Invalid Getter, missing vars or views: %@", temp] shouldExit:NO];
-                goto end;
+                return;
             }
             
             if([[tempArray objectAtIndex:1] isEqualToString:@"views"]){
                 if(tempArray.count<4){
                     [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Invalid Getter, missing values: %@", temp] shouldExit:NO];
-                    goto end;
+                    return;
                 }
                 NSString *viewName = [tempArray objectAtIndex:2];
                 
                 if(![dbtheme->dictViews objectForKey:viewName]){
                     [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"View not found for getter: %@", temp] shouldExit:NO];
-                    goto end;
+                    return;
                 }
                 
                 UIView *view = [dbtheme->dictViews objectForKey:viewName];
@@ -426,7 +416,7 @@
                     result = [(UIScrollView *)view contentOffset].y;
                 else{
                     [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Invalid Getter, no such value: %@", temp] shouldExit:NO];
-                    goto end;
+                    return;
                 }
                 
                 [splitActions replaceObjectAtIndex:i withObject:[NSNumber numberWithFloat:result]];
@@ -434,13 +424,11 @@
             }else{
                 if(![dbtheme->dictVars objectForKey:[tempArray objectAtIndex:2]]){
                     [DreamBoard throwRuntimeException:[NSString stringWithFormat:@"Variable not found for getter: %@", temp] shouldExit:NO];
-                    goto end;
+                    return;
                 }
                 [splitActions replaceObjectAtIndex:i withObject:[dbtheme->dictVars objectForKey:[tempArray objectAtIndex:2]]];
             }
             
-        end:
-            [tempArray release];
         }
     }
     

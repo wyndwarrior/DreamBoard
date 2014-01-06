@@ -56,7 +56,6 @@ static const int NUM  = 9;
             UIGraphicsEndImageContext();
             [UIImagePNGRepresentation(viewImage) writeToFile:[NSString stringWithFormat:@"%@/%@%@.png", cachePath, [ray objectAtIndex:i], (j==0?@"":@"@2x")] atomically:YES];
         }
-        [temp release];
         NSString *newstamp = [NSString stringWithFormat:@"%f",[(NSDate*)[[[NSFileManager defaultManager] attributesOfItemAtPath:path1 error:nil] objectForKey:@"NSFileModificationDate"] timeIntervalSince1970]];
         [newstamp writeToFile:path2 atomically:YES encoding:NSUTF8StringEncoding error:nil];
     }
@@ -83,9 +82,7 @@ static const int NUM  = 9;
             if([[ray objectAtIndex:i] isEqualToString:current]) index = (int)switcherObjects.count;
             ExposeSwitcherObject *object = [[ExposeSwitcherObject alloc] initWithName:[ray objectAtIndex:i]];
             [switcherObjects addObject:object];
-            [object release];
         }
-    [ray release];
     
     mainScrollView = [[UIScrollView alloc] initWithFrame:bounds];
     mainScrollView.contentSize = CGSizeMake(bounds.size.width*(((int)switcherObjects.count-1)/NUM+1), bounds.size.height);
@@ -201,7 +198,6 @@ static const int NUM  = 9;
         if ([delegate respondsToSelector:@selector(didFinishZoomingOut:)])
             [delegate didFinishZoomingOut:self];
         [previewImage removeFromSuperview];
-        [previewImage release];
         self.view.userInteractionEnabled = YES;
     }
     else if(animationkey==3)
@@ -233,33 +229,15 @@ static const int NUM  = 9;
 -(void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];
     [mainScrollView removeFromSuperview];
-    [mainScrollView release];
     [background removeFromSuperview];
-    [background release];
     [shadow removeFromSuperview];
-    [shadow release];
     [pagectrl removeFromSuperview];
-    [pagectrl release];
 }
 
 - (void)dealloc
 {
-    [background release];
-    [shadow release];
-    [switcherObjects release];
-    [pagectrl release];
-    [mainScrollView release];
-    if(previewImage)[previewImage release];
     //sharedInstance = nil;
-    [shadowImage release];
     shadowImage = nil;
-    [scanPath release];
-    [cachePath release];
-    [current release];
-    [backgroundPath release];
-    [shadowPath release];
-    [delegate release];
-    [super dealloc];
 }
 
 +(UIImage *)shadowImage{

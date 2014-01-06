@@ -9,7 +9,6 @@
         self.dict = _dict;
         if([dict objectForKey:@"Apps"]){
             self.appsArray = [[dict objectForKey:@"Apps"] mutableCopy];
-            [appsArray release];
             [dict setObject:appsArray forKey:@"Apps"];
         }
         self.delegate = self;
@@ -64,7 +63,6 @@
                 maxY = MAX(maxY, r*GAPY + i/NUM*PAGEGAPY);
                 appIcon.frame = CGRectMake(c*GAPX + i/NUM*PAGEGAPX, r*GAPY + i/NUM*PAGEGAPY , ICONW, ICONH);
                 [self addSubview:appIcon];
-                [appIcon release];
             }
     self.contentSize = CGSizeMake(maxX+GAPX, maxY+GAPY);
     [self scrollViewDidScroll:nil];
@@ -105,17 +103,6 @@
         [self scrollViewDidScroll:nil];
 }*/
 
-- (void)dealloc
-{
-    [appsArray release];
-    [dict release];
-    [badgeImage release];
-    [editImage release];
-    [maskImage release];
-    [overlayImage release];
-    [shadowImage release];
-    [super dealloc];
-}
 
 -(void)addTo:(NSString *)bundle sender:(DBAppIcon *)sender{
     if(![[dict objectForKey:@"AllApps"] boolValue])

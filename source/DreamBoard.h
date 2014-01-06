@@ -41,14 +41,14 @@
 
 @property(nonatomic, readonly) NSMutableArray *appsArray;
 @property(nonatomic, readonly) NSMutableSet *hiddenSet;
-@property(nonatomic, retain) UIWindow *window;
+@property(nonatomic, strong) UIWindow *window;
 @property(readonly)BOOL isEditing;
 
-@property(nonatomic, retain) NSString *cachePath;
-@property(nonatomic, retain) NSString *scanPath;
-@property(nonatomic, retain) NSString *backgroundPath;
-@property(nonatomic, retain) NSString *shadowPath;
-@property(nonatomic, retain) NSString *shadowImagePath;
+@property(nonatomic, strong) NSString *cachePath;
+@property(nonatomic, strong) NSString *scanPath;
+@property(nonatomic, strong) NSString *backgroundPath;
+@property(nonatomic, strong) NSString *shadowPath;
+@property(nonatomic, strong) NSString *shadowImagePath;
 @property(nonatomic, readonly) DBTheme *dbtheme;
 
 +(DreamBoard*)sharedInstance;

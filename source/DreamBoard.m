@@ -19,7 +19,6 @@ static DreamBoard *sharedInstance;
             [hiddenSet addObjectsFromArray:hideMe];
             if(dict && [dict objectForKey:@"Hidden"]){
                 [hiddenSet addObjectsFromArray:[dict objectForKey:@"Hidden"]];
-                [dict release];
             }
         }
         
@@ -32,7 +31,6 @@ static DreamBoard *sharedInstance;
             NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:[prefsPath objectForKey:@"Path"]];
             if(dict){
                 prefsDict = [dict mutableCopy];
-                [dict release];
             }
             
             if( !prefsDict )
@@ -52,20 +50,6 @@ static DreamBoard *sharedInstance;
 }
 
 
-- (void)dealloc
-{
-    //probably won't ever happen, but just to be safe
-    [cachePath release];
-    [scanPath release];
-    [backgroundPath release];
-    [shadowPath release];
-    [shadowImagePath release];
-    [appsArray release];
-    [window release];
-    [hiddenSet release];
-    [prefsDict release];
-    [super dealloc];
-}
 
 -(void)show{
     window.userInteractionEnabled = NO;
@@ -84,7 +68,6 @@ static DreamBoard *sharedInstance;
     loading = [[DBLoadingView alloc] initWithFrame:frame];
     loading.label.text = @"Preparing theme switcher";
     [window addSubview:loading];
-    [loading release];
     [self performSelector:@selector(addSwitcher) withObject:nil afterDelay:0];
 }
 
@@ -95,7 +78,6 @@ static DreamBoard *sharedInstance;
     loading = [[DBLoadingView alloc] initWithFrame:frame];
     loading.label.text = @"Preparing theme";
     [window addSubview:loading];
-    [loading release];
 }
 
 -(void)addSwitcher{
@@ -112,7 +94,6 @@ static DreamBoard *sharedInstance;
     [loading hide];
 }
 -(void)didFinishSelection:(ExposeSwitcher *)view{
-    [view release];
     window.userInteractionEnabled = YES;
 }
 
@@ -121,7 +102,6 @@ static DreamBoard *sharedInstance;
     if(![[[prefsPath objectForKey:@"Prefs"] objectForKey:@"Launched"] boolValue]){
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Welcome" message:@"Welcome to Dreamboard! Tap on any theme to switch to it. Tap and hold on any theme to see more options." delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
-        [alert release];
         [[prefsPath objectForKey:@"Prefs"] setObject:[NSNumber numberWithBool:YES] forKey:@"Launched"];
         [[prefsPath objectForKey:@"Prefs"] writeToFile:[prefsPath objectForKey:@"Path"] atomically:YES];
     }
@@ -153,8 +133,6 @@ static DreamBoard *sharedInstance;
     else
         alert = [[UIAlertView alloc] initWithTitle:object.name message:[dict objectForKey:@"Description"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Edit", @"Reset", nil];
     [alert show];
-    [alert release];
-    [dict release];
 }
 
 -(void)didFinishZoomingOut:(ExposeSwitcher *)view{
@@ -194,7 +172,6 @@ static DreamBoard *sharedInstance;
     dbtheme.isEditing = YES;
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Editing Mode" message:@"Welcome to editing mode. Tap on any app icon placeholder to change the icon. Press the home button when you are done!" delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
     [alert show];
-    [alert release];
     if(dbtheme)
     for(DBAppIcon *app in dbtheme->allAppIcons)
         if(app.loaded){
@@ -233,8 +210,7 @@ static DreamBoard *sharedInstance;
         return;
     }
     if(dbtheme)[self unloadTheme];
-    [currentTheme release];
-    currentTheme = [theme retain];
+    currentTheme = theme;
     dbtheme = [[DBTheme alloc] initWithName:theme window:window];
     if(isEditing)
     dbtheme.isEditing = YES;
@@ -246,11 +222,9 @@ static DreamBoard *sharedInstance;
 -(void)unloadTheme{
     window.userInteractionEnabled = NO;
     if(dbtheme){
-        [dbtheme release];
         dbtheme = nil;
     }
     if(currentTheme){
-        [currentTheme release];
         currentTheme = nil;
     }
     window.userInteractionEnabled = YES;
@@ -258,9 +232,9 @@ static DreamBoard *sharedInstance;
 
 +(void)throwRuntimeException:(NSString*)msg shouldExit:(BOOL)exit{
     if(exit)
-        [[[[UIAlertView alloc] initWithTitle:@"Runtime Error" message:msg delegate:[DreamBoard sharedInstance] cancelButtonTitle:@"Continue" otherButtonTitles:@"Exit",nil] autorelease] show];
+        [[[UIAlertView alloc] initWithTitle:@"Runtime Error" message:msg delegate:[DreamBoard sharedInstance] cancelButtonTitle:@"Continue" otherButtonTitles:@"Exit",nil] show];
     else
-        [[[[UIAlertView alloc] initWithTitle:@"Runtime Error" message:msg delegate:[DreamBoard sharedInstance] cancelButtonTitle:@"Continue" otherButtonTitles:nil] autorelease] show];
+        [[[UIAlertView alloc] initWithTitle:@"Runtime Error" message:msg delegate:[DreamBoard sharedInstance] cancelButtonTitle:@"Continue" otherButtonTitles:nil] show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -277,7 +251,6 @@ static DreamBoard *sharedInstance;
                 isEditing = YES;
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Editing Mode" message:@"Welcome to editing mode. Tap on any app icon placeholder to change the icon. Press the home button when you are done!" delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
                 [alert show];
-                [alert release];
             }
         }else if(buttonIndex == 2){
             [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, alertView.title] error:nil];

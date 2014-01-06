@@ -7,8 +7,8 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 {
     self = [super init];
     if (self) {
-        themeName = [name retain];
-        window = [_window retain];
+        themeName = name;
+        window = _window;
         //NSLog(@"%@", dictTheme);
         allAppIcons = [[NSMutableArray alloc] init];
     }
@@ -27,7 +27,6 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     
     if((![dict objectForKey:@"Plist"] || ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/%@.plist", MAINPATH, themeName, [dict objectForKey:@"Plist"]]]) && ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, themeName]]){
         [DreamBoard throwRuntimeException:@"Theme plist not found" shouldExit:YES];
-        [dict release];
         return;
     }
     
@@ -35,7 +34,6 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
         dictTheme = [[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/Current.plist", MAINPATH, themeName]] mutableCopy];
     else
         dictTheme = [[NSDictionary dictionaryWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/%@.plist", MAINPATH, themeName, [dict objectForKey:@"Plist"]]] mutableCopy];
-    [dict release];
     
     if([dictTheme objectForKey:@"DynamicViews"]){
         dictDynViews = [[dictTheme objectForKey:@"DynamicViews"] mutableCopy];
@@ -54,10 +52,10 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     dictViewsToggledInteraction = [[NSMutableDictionary alloc] init];
     
     if([dictTheme objectForKey:@"Functions"])
-        functions = [[dictTheme objectForKey:@"Functions"] retain];
+        functions = [dictTheme objectForKey:@"Functions"];
     
     if([dictTheme objectForKey:@"LabelStyle"])
-        labelStyle = [[dictTheme objectForKey:@"LabelStyle"] retain];
+        labelStyle = [dictTheme objectForKey:@"LabelStyle"];
     
     if([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Images/Badge.png", MAINPATH, themeName]])
         badgeImage = [[UIImage alloc] initWithContentsOfFile:
@@ -88,12 +86,9 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
             NSMutableDictionary *tmp = [[arrayMainView objectAtIndex:i] mutableCopy];
             UIView *view = [self loadView:tmp];
             [mainView insertSubview:view atIndex:0];
-            [view release];
             [arrayMainView replaceObjectAtIndex:i withObject:tmp];
-            [tmp release];
         }
         [dictTheme setObject:arrayMainView forKey:@"MainView"];
-        [arrayMainView release];
     }
     
     if([dictTheme objectForKey:@"Onload"]){
@@ -143,11 +138,8 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 				UIView *v = [self loadView:tempDict];
 				[temp insertSubview:v atIndex:0];
 				[ray replaceObjectAtIndex:i withObject:tempDict];
-                [v release];
-				[tempDict release];
 			}
 			[dict setObject:ray forKey:@"Subviews"];
-			[ray release];
 		}
 		
 		//set content offset
@@ -269,11 +261,8 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 				UIView *v = [self loadView:tempDict];
 				[view insertSubview:v atIndex:0];
 				[ray replaceObjectAtIndex:i withObject:tempDict];
-				[tempDict release];
-				[v release];
 			}
 			[dict setObject:ray forKey:@"Subviews"];
-			[ray release];
 		}
 	}
 	
@@ -350,33 +339,14 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 - (void)dealloc
 {
     isDealloc = YES;
-    [badgeImage release];
-    [overlayImage release];
-    [shadowImage release];
-    [maskImage release];
-    [editImage release];
     
-    [window release];
-    [themeName release];
     
-    [dictTheme release];
-    [dictDynViews release];
-    [dictViews release];
-    [dictVars release];
     
-    [dictViewsInteraction release];
-    [dictViewsToggled release];
-    [dictViewsToggledInteraction release];
     
-    [functions release];
-    [labelStyle release];
     
     [mainView removeFromSuperview];
-    [mainView release];
     
-    [allAppIcons release];
     
-    [super dealloc];
 }
 
 -(void)savePlist{
@@ -394,25 +364,23 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     for(NSDictionary *dict in grids)
         for(id app in [DreamBoard sharedInstance].appsArray)
             if(![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@-%dx%d.png", [DBAppIcon cacheLocation], [app leafIdentifier], [[dict objectForKey:@"IconWidth"] intValue], [[dict objectForKey:@"IconHeight"] intValue]]]){
-                NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-                DBAppIcon *temp = [[DBAppIcon alloc] init];
+                @autoreleasepool {
+                    DBAppIcon *temp = [[DBAppIcon alloc] init];
+                    
+                    temp.application = app;
+                    temp.badgeImage = badgeImage;
+                    temp.overlayImage = overlayImage;
+                    temp.shadowImage = shadowImage;
+                    temp.maskImage = maskImage;
+                    temp.editImage = editImage;
+                    temp.labelStyle = [dict objectForKey:@"LabelStyle"]==nil?labelStyle:[dict objectForKey:@"LabelStyle"];
+                    temp.cacheHeight = [[dict objectForKey:@"IconHeight"] intValue];
+                    temp.cacheWidth = [[dict objectForKey:@"IconWidth"] intValue];
+                    temp.frame = CGRectMake(0, 0, [[dict objectForKey:@"IconWidth"] intValue], [[dict objectForKey:@"IconHeight"] intValue]);
+                    [temp loadIcon:NO shouldCache:YES];
                 
-                temp.application = app;
-                temp.badgeImage = badgeImage;
-                temp.overlayImage = overlayImage;
-                temp.shadowImage = shadowImage;
-                temp.maskImage = maskImage;
-                temp.editImage = editImage;
-                temp.labelStyle = [dict objectForKey:@"LabelStyle"]==nil?labelStyle:[dict objectForKey:@"LabelStyle"];
-                temp.cacheHeight = [[dict objectForKey:@"IconHeight"] intValue];
-                temp.cacheWidth = [[dict objectForKey:@"IconWidth"] intValue];
-                temp.frame = CGRectMake(0, 0, [[dict objectForKey:@"IconWidth"] intValue], [[dict objectForKey:@"IconHeight"] intValue]);
-                [temp loadIcon:NO shouldCache:YES];
-                [temp release];
-                
-                [pool drain];
+                }
             }
-    [grids release];
         
     
 }
@@ -437,10 +405,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
             [temp replaceObjectAtIndex:i withObject:tempDict];
             UIView *tempView = [self loadView:tempDict];
             [lockView insertSubview:tempView atIndex:0];
-            [tempView release];
-            [tempDict release];
         }
-        [temp release];
         [awayView addSubview:lockView];
     }
 }
@@ -449,7 +414,6 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 }
 
 -(void)didRemoveFromSuperview{
-    [lockView release];
     lockView = nil;
 }
 

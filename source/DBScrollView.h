@@ -4,5 +4,5 @@
 @interface DBScrollView : UIScrollView <UIScrollViewDelegate>{
     NSArray *actions;
 }
-@property(nonatomic, retain) NSArray *actions;
+@property(nonatomic, strong) NSArray *actions;
 @end

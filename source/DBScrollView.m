@@ -19,9 +19,7 @@
 
 - (void)dealloc
 {
-    [actions release];
     self.delegate = nil;
-    [super dealloc];
 }
 
 @end

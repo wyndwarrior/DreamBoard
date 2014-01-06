@@ -15,7 +15,6 @@
         
         UILongPressGestureRecognizer * recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(goHold:)];    
         [(id)btn addGestureRecognizer:recognizer];
-        [recognizer release];
         
         shadow = [[UIImageView alloc] init];
         shadow.image = [ExposeSwitcher shadowImage];
@@ -32,7 +31,7 @@
         [self addSubview:label];
         [self addSubview:btn];
         
-        name = [_name retain];
+        name = _name;
         self.clipsToBounds = NO;
     }
     
@@ -46,14 +45,6 @@
     [label setFrame:CGRectMake(0,frame.size.height+4, frame.size.width, 12)];
 }
 
-- (void)dealloc
-{
-    [btn release];
-    [label release];
-    [name release];
-    [shadow release];
-    [super dealloc];
-}
 
 -(void)go:(id)sender{
     [[ExposeSwitcher sharedInstance] switchTo:self];

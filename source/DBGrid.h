@@ -14,14 +14,14 @@
     UIImage *editImage;
     UIImage *badgeImage;
 }
-@property(nonatomic, retain) NSMutableDictionary *dict;
-@property(nonatomic, retain) NSMutableArray *appsArray;
+@property(nonatomic, strong) NSMutableDictionary *dict;
+@property(nonatomic, strong) NSMutableArray *appsArray;
 
-@property(nonatomic, retain) UIImage *shadowImage;
-@property(nonatomic, retain) UIImage *maskImage;
-@property(nonatomic, retain) UIImage *overlayImage;
-@property(nonatomic, retain) UIImage *editImage;
-@property(nonatomic, retain) UIImage *badgeImage;
+@property(nonatomic, strong) UIImage *shadowImage;
+@property(nonatomic, strong) UIImage *maskImage;
+@property(nonatomic, strong) UIImage *overlayImage;
+@property(nonatomic, strong) UIImage *editImage;
+@property(nonatomic, strong) UIImage *badgeImage;
 
 - (id)initWithDict:(NSMutableDictionary *)_dict;
 - (void)loadGrid;

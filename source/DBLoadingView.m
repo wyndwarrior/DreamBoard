@@ -2,7 +2,7 @@
 @implementation DBLoadingView
 @synthesize label;
 -(id)initWithFrame:(CGRect)frame{
-    [super initWithFrame:frame];
+    if (!(self = [super initWithFrame:frame])) return nil;
     self.alpha = 0;
     trans = [[UIView alloc] initWithFrame:CGRectMake(0,0,frame.size.width,frame.size.height)];
     trans.backgroundColor = UIColor.blackColor;
@@ -39,11 +39,5 @@
     [self removeFromSuperview];
 }
 
--(void)dealloc{
-    [trans release];
-    [activity release];
-    [label release];
-    [super dealloc];
-}
 
 @end

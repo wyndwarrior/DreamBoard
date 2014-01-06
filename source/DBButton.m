@@ -10,7 +10,7 @@
 	
 	//grab actions
 	if([dict objectForKey:@"Actions"])
-		actions = [[dict objectForKey:@"Actions"] retain];
+		actions = [dict objectForKey:@"Actions"];
     
 	//grab button image
 	if([dict objectForKey:@"Image"])
@@ -36,10 +36,5 @@
 	[button setFrame:CGRectMake(0,0,frame.size.width,frame.size.height)];
 }
 
--(void)dealloc{
-    [button release];
-    [actions release];
-	[super dealloc];
-}
 
 @end

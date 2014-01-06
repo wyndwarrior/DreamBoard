@@ -22,22 +22,20 @@
     NSMutableDictionary *dict;
     NSDictionary *labelStyle;
     
-    DBGrid *grid;
-    
     CGRect theFrame;
     BOOL loaded, hasCache;
     int cacheWidth, cacheHeight;
 }
-@property(nonatomic, retain) NSMutableDictionary *dict;
-@property(nonatomic, retain) UIImage *shadowImage;
-@property(nonatomic, retain) UIImage *maskImage;
-@property(nonatomic, retain) UIImage *overlayImage;
-@property(nonatomic, retain) UIImage *editImage;
-@property(nonatomic, retain) UIImage *badgeImage;
-@property(nonatomic, retain) id application;
-@property(nonatomic, retain) NSDictionary *labelStyle;
+@property(nonatomic, strong) NSMutableDictionary *dict;
+@property(nonatomic, strong) UIImage *shadowImage;
+@property(nonatomic, strong) UIImage *maskImage;
+@property(nonatomic, strong) UIImage *overlayImage;
+@property(nonatomic, strong) UIImage *editImage;
+@property(nonatomic, strong) UIImage *badgeImage;
+@property(nonatomic, strong) id application;
+@property(nonatomic, strong) NSDictionary *labelStyle;
 @property(nonatomic, readonly) BOOL loaded;
-@property(nonatomic, assign) DBGrid*grid;
+@property(nonatomic, weak) DBGrid*grid;
 
 @property(nonatomic, assign) int cacheWidth;
 @property(nonatomic, assign) int cacheHeight;

@@ -4,6 +4,7 @@ export ARCHS=armv7 arm64
 include $(THEOS)/makefiles/common.mk
 
 export SOURCE=source
+ADDITIONAL_OBJCFLAGS = -fobjc-arc
 
 TWEAK_NAME = DreamBoard
 DreamBoard_FILES = $(SOURCE)/Tweak.xm

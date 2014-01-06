@@ -29,7 +29,6 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 - (void)dealloc
 {
     [timer invalidate];
-    [super dealloc];
 }
 
 @end
