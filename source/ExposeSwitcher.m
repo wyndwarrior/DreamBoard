@@ -177,7 +177,7 @@ static const int NUM  = 9;
         [UIView setAnimationDuration:.75];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
-        id theme = [switcherObjects objectAtIndex:previewImage.tag];
+        ExposeSwitcherObject* theme = [switcherObjects objectAtIndex:previewImage.tag];
         int r = [theme row];
         int c = [theme col];
         previewImage.frame = CGRectMake(x[r][c],y[r][c],width,height);

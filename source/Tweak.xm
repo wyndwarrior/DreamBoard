@@ -1,6 +1,7 @@
 #import "prefix.h"
 #import "DreamBoard.h"
 
+
 %hook SBApplicationIcon
 -(void)launch{
     [[DreamBoard sharedInstance] showAllExcept:nil];
@@ -13,7 +14,7 @@
 -(id)initWithApplication:(id)application{
 	self = %orig(application);
     if(!self)return self;
-    NSLog(@"%@", DreamBoard.sharedInstance.appsArray);
+    //NSLog(@"%@", DreamBoard.sharedInstance.appsArray);
 	if([DreamBoard.sharedInstance.hiddenSet containsObject:[self leafIdentifier]]) return self;
 	int i = 0;
 	for(; i<(int)DreamBoard.sharedInstance.appsArray.count; i++)
@@ -45,6 +46,15 @@
     [DreamBoard sharedInstance].window = [self window];
     [[DreamBoard sharedInstance] preLoadTheme];
     return self;
+}
+
+-(void)launchIcon:(id)arg1 fromLocation:(int)arg2{
+    [[DreamBoard sharedInstance] showAllExcept:nil];
+	if(![[[arg1 application] bundleIdentifier] isEqualToString:@"com.wynd.dreamboard"]){
+		%orig;
+		return;
+	}
+	[[DreamBoard sharedInstance] show];
 }
 -(BOOL)clickedMenuButton{
 	if(DreamBoard.sharedInstance.isEditing){

@@ -39,6 +39,8 @@ static inline bool fileExists(NSString * path){
 #import "Headers/SBApplicationIcon.h"
 #import "Headers/SBUIController.h"
 #import "Headers/UIWebDocumentView.h"
+#import "Headers/SBUserAgent.h"
+#import "Headers/SBCCQuickLaunchSectionController.h"
 #import "Headers/UIKeyboard.h"
 #define DBPATH @"/var/mobile/Library/DreamBoard"
 #define MAINPATH @""
