@@ -15,7 +15,9 @@
 
 #define TARGET_THEOS 1
 
-#define _alert(x) 
+#define _alert(x) [[[UIAlertView alloc] initWithTitle:@"Alert" message:x delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles: nil] show]
+
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 #define FMAN [NSFileManager defaultManager]
 static inline bool dirExists(NSString * path){
@@ -52,6 +54,7 @@ static inline bool fileExists(NSString * path){
 #else
 #import "Headers/SBAwayController.h"
 #import "Headers/SBAwayView.h"
+#import "Headers/SBUIController.h"
 #import "SBApplicationIcon.h"
 #import "Headers/UIWebDocumentView.h"
 #import "Headers/UIKeyboard.h"

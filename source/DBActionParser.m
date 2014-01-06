@@ -36,7 +36,7 @@
         {
             for(int i = 0; i<[[[DreamBoard sharedInstance] appsArray] count]; i++)
                 if([[[[DreamBoard sharedInstance] appsArray][i] leafIdentifier] isEqualToString:splitActions[1]]){
-                    [[[DreamBoard sharedInstance] appsArray][i] launch];
+                    [[DreamBoard sharedInstance] launch:[[DreamBoard sharedInstance] appsArray][i]];
                     break;
                 }
         }

@@ -173,7 +173,7 @@ static NSString *cache;
     }
     else{
         if(grid)[grid doActions];
-        [application launch];
+        [[DreamBoard sharedInstance] launch:application];
     }
 }
 

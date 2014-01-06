@@ -43,10 +43,13 @@
     [DreamBoard sharedInstance].shadowImagePath = [NSString stringWithFormat:@"/DreamBoard/_library/Images/Shadow.png"];
     [DreamBoard sharedInstance].window = [self window];
     [[DreamBoard sharedInstance] preLoadTheme];
+    [DreamBoard sharedInstance].sbuicontroller = self;
     return self;
 }
 
 -(void)launchIcon:(id)arg1 fromLocation:(int)arg2{
+    //NSString *tmp = [NSString stringWithFormat:@"%d", arg2];
+    //_alert(tmp);
     [[DreamBoard sharedInstance] showAllExcept:nil];
 	if(![[[arg1 application] bundleIdentifier] isEqualToString:@"com.wynd.dreamboard"]){
 		%orig;

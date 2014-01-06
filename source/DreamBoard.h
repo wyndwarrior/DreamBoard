@@ -48,6 +48,8 @@
 @property(nonatomic, strong) NSString *shadowImagePath;
 @property(nonatomic, readonly) DBTheme *dbtheme;
 
+@property(nonatomic, weak) id sbuicontroller;
+
 +(DreamBoard*)sharedInstance;
 
 //show the theme switcher
@@ -57,6 +59,8 @@
 -(void)hideSwitcher;
 -(void)showSwitcher;
 -(void)toggleSwitcher;
+
+-(void)launch:(id)app;
 
 -(void)startEditing;
 -(void)stopEditing;

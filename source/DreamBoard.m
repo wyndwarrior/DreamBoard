@@ -102,6 +102,7 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)hideAllExcept:(UIView *)view{
+    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(hidden)return;
     for(UIView *_view in window.subviews)
         if(_view!=view && ![view.description hasPrefix:@"<SBAppContextHostView"] && ![view.description hasPrefix:@"<SBHostWrapperView"])
@@ -110,8 +111,10 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)showAllExcept:(UIView *)_view{
+    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(!hidden)return;
     for(UIView *view in window.subviews)
+        //TODO: less hacking
         if(view!=_view && ![view.description hasPrefix:@"<SBAppContextHostView"] && ![view.description hasPrefix:@"<SBHostWrapperView"])
             view.hidden = NO;
     hidden^=1;
@@ -138,6 +141,7 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)hideSwitcher{
+    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(dbtheme){
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:.25];
@@ -146,6 +150,7 @@ static DreamBoard *sharedInstance;
     }
 }
 -(void)showSwitcher{
+    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(dbtheme){
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:.25];
@@ -154,6 +159,7 @@ static DreamBoard *sharedInstance;
     }
 }
 -(void)toggleSwitcher{
+    if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(dbtheme){
     if(dbtheme->mainView.frame.origin.y == -93)
         [self hideSwitcher];
@@ -255,6 +261,13 @@ static DreamBoard *sharedInstance;
 
 +(NSString *)replaceRootDir:(NSString *)str{
     return [str stringByReplacingOccurrencesOfString:@"$ROOT" withString:[NSString stringWithFormat:@"/DreamBoard/%@", [[DreamBoard sharedInstance] currentTheme]]];
+}
+
+-(void)launch:(id)app{
+    if( [app respondsToSelector:@selector(launch)])
+        [app launch];
+    else
+        [self.sbuicontroller launchIcon:app fromLocation:0];
 }
 
 -(void)preLoadTheme{
