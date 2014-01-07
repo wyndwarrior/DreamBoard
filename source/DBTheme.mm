@@ -16,7 +16,8 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 }
 
 -(void)loadTheme{
-    UIKeyboardDisableAutomaticAppearance();
+    if( !SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") )
+        UIKeyboardDisableAutomaticAppearance();
     if(![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Info.plist", MAINPATH, themeName]]){
         [DreamBoard throwRuntimeException:@"Info.plist not found" shouldExit:YES];
         return;

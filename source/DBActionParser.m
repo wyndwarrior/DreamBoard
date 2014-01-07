@@ -297,6 +297,17 @@
                 [ac _unlockWithSound:YES isAutoUnlock:NO];
             else if( [ac respondsToSelector:@selector(unlockWithSound:)] )
                 [ac unlockWithSound:YES];
+            else{
+                id lc = [objc_getClass("SBLockScreenManager") sharedInstance];
+                if( [lc respondsToSelector:@selector(startUIUnlockFromSource:withOptions:)]){
+                    [lc startUIUnlockFromSource:0 withOptions:nil];
+                    _Bool unlocked = false;
+                    if( [lc respondsToSelector:@selector(isUILocked)])
+                        unlocked = ![lc isUILocked];
+                    if( !unlocked && [lc respondsToSelector:@selector(applicationRequestedDeviceUnlock)])
+                        [lc applicationRequestedDeviceUnlock];
+                }
+            }
         }
         
         

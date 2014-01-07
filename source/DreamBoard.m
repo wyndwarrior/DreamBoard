@@ -105,6 +105,7 @@ static DreamBoard *sharedInstance;
     if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(hidden)return;
     for(UIView *_view in window.subviews)
+        //TODO: hack much?
         if(_view!=view && ![view.description hasPrefix:@"<SBAppContextHostView"] && ![view.description hasPrefix:@"<SBHostWrapperView"])
             _view.hidden = YES;
     hidden^=1;
@@ -114,7 +115,6 @@ static DreamBoard *sharedInstance;
     if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(!hidden)return;
     for(UIView *view in window.subviews)
-        //TODO: less hacking
         if(view!=_view && ![view.description hasPrefix:@"<SBAppContextHostView"] && ![view.description hasPrefix:@"<SBHostWrapperView"])
             view.hidden = NO;
     hidden^=1;
@@ -200,7 +200,6 @@ static DreamBoard *sharedInstance;
 }
 -(void)loadTheme:(NSString*) theme{
     if([theme isEqualToString:self.currentTheme])return;
-    //unloading?
     if([theme isEqualToString:@"Default"]){
         //if there is already a theme, unload it
         if(currentTheme)
@@ -217,7 +216,6 @@ static DreamBoard *sharedInstance;
     [dbtheme loadTheme];
     prefsPath[@"Prefs"][@"Current Theme"] = theme;
     [prefsPath[@"Prefs"] writeToFile:prefsPath[@"Path"] atomically:YES];
-    //keep track of current theme
 }
 -(void)unloadTheme{
     window.userInteractionEnabled = NO;

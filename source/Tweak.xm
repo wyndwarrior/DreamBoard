@@ -111,6 +111,20 @@
 }
 %end
 
+%hook SBLockScreenViewController
+-(void)activate{
+    %orig;
+    if([[DreamBoard sharedInstance] dbtheme])
+        [[DreamBoard sharedInstance].dbtheme didUndim:[self lockScreenView]];
+}
+-(void)deactivate{
+    %orig;
+    if([[DreamBoard sharedInstance] dbtheme])
+        [[DreamBoard sharedInstance].dbtheme didDim];
+}
+%end
+
+
 %hook SBAwayView
 -(void)setDimmed:(BOOL)dimmed{
     %orig(dimmed);
