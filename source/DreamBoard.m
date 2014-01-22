@@ -210,7 +210,10 @@ static DreamBoard *sharedInstance;
     }
     if(dbtheme)[self unloadTheme];
     currentTheme = theme;
-    dbtheme = [[DBTheme alloc] initWithName:theme window:window];
+    if( self.sbView)
+        dbtheme = [[DBTheme alloc] initWithName:theme window:self.sbView];
+    else
+        dbtheme = [[DBTheme alloc] initWithName:theme window:window];
     if(isEditing)
     dbtheme.isEditing = YES;
     [dbtheme loadTheme];
@@ -259,6 +262,12 @@ static DreamBoard *sharedInstance;
 
 +(NSString *)replaceRootDir:(NSString *)str{
     return [str stringByReplacingOccurrencesOfString:@"$ROOT" withString:[NSString stringWithFormat:@"/DreamBoard/%@", [[DreamBoard sharedInstance] currentTheme]]];
+}
+
+-(void)reLayout{
+    if( self.dbtheme ){
+        [self.sbView bringSubviewToFront:self.dbtheme.mainView];
+    }
 }
 
 -(void)launch:(id)app{

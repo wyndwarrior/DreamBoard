@@ -10,7 +10,7 @@
 @class DBLockView;
 @interface DBTheme : NSObject {
     NSString *themeName;
-    UIWindow *window;
+    UIView *window;
     
     UIImage *badgeImage;
     UIImage *overlayImage;
@@ -40,9 +40,10 @@
     BOOL isDealloc;
 }
 @property(nonatomic, assign) BOOL isEditing;
+@property(nonatomic, strong) UIView *mainView;
 
 -(UIView *)loadView:(NSMutableDictionary *)dict;
--(id)initWithName:(NSString*)name window:(UIWindow *)_window;
+-(id)initWithName:(NSString*)name window:(UIView *)_window;
 -(id)findApp:(NSString*)app;
 -(void)loadTheme;
 -(void)savePlist;

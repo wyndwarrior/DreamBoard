@@ -298,6 +298,7 @@
             else if( [ac respondsToSelector:@selector(unlockWithSound:)] )
                 [ac unlockWithSound:YES];
             else{
+#ifdef TARGET_THEOS
                 id lc = [objc_getClass("SBLockScreenManager") sharedInstance];
                 if( [lc respondsToSelector:@selector(startUIUnlockFromSource:withOptions:)]){
                     [lc startUIUnlockFromSource:0 withOptions:nil];
@@ -307,6 +308,7 @@
                     if( !unlocked && [lc respondsToSelector:@selector(applicationRequestedDeviceUnlock)])
                         [lc applicationRequestedDeviceUnlock];
                 }
+#endif
             }
         }
         
@@ -448,6 +450,10 @@
         [splitActions insertObject:@(result) atIndex:index];
     }
     
+    [DBActionParser parseArithmetic:splitActions];
+}
+
++(void)parseArithmetic:(NSMutableArray*)splitActions{
     while([splitActions containsObject:@"*"] || [splitActions containsObject:@"/"]){
         int index = [splitActions indexOfObject:@"*"]>[splitActions indexOfObject:@"/"]?[splitActions indexOfObject:@"/"]:[splitActions indexOfObject:@"*"];
         float one = [splitActions[index-1] floatValue];

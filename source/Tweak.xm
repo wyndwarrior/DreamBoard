@@ -1,6 +1,18 @@
 #import "prefix.h"
 #import "DreamBoard.h"
 
+%hook SBRootFolderView
+- (id)initWithFolder:(id)arg1 orientation:(long long)arg2{
+    self = %orig;
+    [DreamBoard sharedInstance].sbView = self;
+    return self;
+}
+-(void)layoutSubviews{
+    //_alert([[self subviews] description]);
+    %orig;
+    [[DreamBoard sharedInstance] reLayout];
+}
+%end
 
 %hook SBApplicationIcon
 -(void)launch{
@@ -29,6 +41,17 @@
 -(void)setBadge:(NSString*)badge{
 	%orig(badge);
     [DreamBoard.sharedInstance updateBadgeForApp:[self leafIdentifier]];
+}
+
+%end
+
+%hook SBApplication
+
+-(void)setBadge:(NSString*)badge{
+	%orig(badge);
+    //NSString * str = [NSString stringWithFormat:@"Badge %@", badge];
+    //_alert(str);
+    [DreamBoard.sharedInstance updateBadgeForApp:[self bundleIdentifier]];
 }
 
 %end

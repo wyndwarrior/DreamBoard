@@ -30,7 +30,7 @@
     GAPY = [dict[@"GapY"] intValue];
     if(dict[@"PageGapX"] && dict[@"PageGapY"]){
         PAGEGAPX = [dict[@"PageGapX"] intValue];
-        PAGEGAPY = [dict[@"PalpageGapY"] intValue];
+        PAGEGAPY = [dict[@"PageGapY"] intValue];
     }else
         PAGEGAPY = [dict[@"PageHeight"] intValue];
     
@@ -61,6 +61,7 @@
                 maxX = MAX(maxX, c*GAPX + i/NUM*PAGEGAPX);
                 maxY = MAX(maxY, r*GAPY + i/NUM*PAGEGAPY);
                 appIcon.frame = CGRectMake(c*GAPX + i/NUM*PAGEGAPX, r*GAPY + i/NUM*PAGEGAPY , ICONW, ICONH);
+                NSLog(@"%d, %@", i, NSStringFromCGRect(appIcon.frame));
                 [self addSubview:appIcon];
             }
     self.contentSize = CGSizeMake(maxX+GAPX, maxY+GAPY);

@@ -2,8 +2,8 @@
 extern "C" void UIKeyboardDisableAutomaticAppearance();
 
 @implementation DBTheme
-@synthesize isEditing;
-- (id)initWithName:(NSString *)name window:(UIWindow *)_window
+@synthesize isEditing, mainView = mainView;
+- (id)initWithName:(NSString *)name window:(UIView *)_window
 {
     self = [super init];
     if (self) {
@@ -77,15 +77,15 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     
     [self cacheIfNeeded];
     
-    mainView = [[UIView alloc] initWithFrame:window.frame];
-    mainView.backgroundColor = UIColor.blackColor;
-    mainView.clipsToBounds = YES;
+    self.mainView = [[UIView alloc] initWithFrame:window.frame];
+    self.mainView.backgroundColor = UIColor.blackColor;
+    self.mainView.clipsToBounds = YES;
     if(dictTheme[@"MainView"]){
         NSMutableArray *arrayMainView = [dictTheme[@"MainView"] mutableCopy];
         for(int i = 0; i<(int)arrayMainView.count; i++){
             NSMutableDictionary *tmp = [arrayMainView[i] mutableCopy];
             UIView *view = [self loadView:tmp];
-            [mainView insertSubview:view atIndex:0];
+            [self.mainView insertSubview:view atIndex:0];
             arrayMainView[i] = tmp;
         }
         dictTheme[@"MainView"] = arrayMainView;
@@ -96,7 +96,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
             [DBActionParser parseAction:action];
     }
     
-    [window addSubview:mainView];
+    [window addSubview:self.mainView];
 }
 
 -(UIView *)loadView:(NSMutableDictionary *)dict{
@@ -311,7 +311,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 - (void)dealloc
 {
     isDealloc = YES;
-    [mainView removeFromSuperview];
+    [self.mainView removeFromSuperview];
 }
 
 -(void)savePlist{

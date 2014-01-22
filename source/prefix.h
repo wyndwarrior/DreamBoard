@@ -46,6 +46,8 @@ static inline bool fileExists(NSString * path){
 #import "Headers/SBLockScreenViewController.h"
 #import "Headers/SBLockScreenManager.h"
 #import "Headers/UIKeyboard.h"
+#import "Headers/SBRootFolderView.h"
+#import "Headers/SBApplication.h"
 #define DBPATH @"/var/mobile/Library/DreamBoard"
 #define MAINPATH @""
 #define CACHEPATH [DBPATH stringByAppendingPathComponent:@"_library/Cache"]
