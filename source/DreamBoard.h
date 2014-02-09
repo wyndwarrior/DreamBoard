@@ -34,12 +34,16 @@
     
     ExposeSwitcherObject* ExpObj;
     DBLoadingView *loading;
+    
+    UIInterfaceOrientation ori;
 }
 
 @property(nonatomic, readonly) NSMutableArray *appsArray;
 @property(nonatomic, readonly) NSMutableSet *hiddenSet;
 @property(nonatomic, strong) UIWindow *window;
 @property(nonatomic, weak) UIView *sbView;
+@property(nonatomic, weak) UIView *sbSuperview;
+@property(nonatomic, assign) CGRect sbViewFrame;
 @property(readonly)BOOL isEditing;
 
 @property(nonatomic, strong) NSString *cachePath;
@@ -61,11 +65,18 @@
 -(void)showSwitcher;
 -(void)toggleSwitcher;
 -(void)reLayout;
+-(void)setOrientation;
+
+-(UIView *)removeSbView;
+-(void)returnSbView;
+
 
 -(void)launch:(id)app;
+-(void)launchBundleId:(NSString *)bundle;
 
 -(void)startEditing;
 -(void)stopEditing;
+-(void)unlockDevice;
 
 -(void)updateBadgeForApp:(NSString*)leafIdentifier;
 

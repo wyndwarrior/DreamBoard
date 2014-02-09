@@ -1,10 +1,9 @@
 #import "prefix.h"
 
-@interface DBLoadingView : UIView {
-    UIView *trans;
-    UIActivityIndicatorView *activity;
-    UILabel *label;
-}
-@property(readonly) UILabel *label;
+@interface DBLoadingView : UIView
+
+@property(nonatomic, strong) UILabel *label;
+
 -(void)hide;
+
 @end

@@ -1,6 +1,6 @@
 #import "prefix.h"
 #import "ExposeSwitcher.h"
-
+#import "DreamBoard.h"
 
 @class UILongPressGestureRecognizer;
 @interface SomeObject : NSObject {
@@ -19,6 +19,7 @@
 @property(assign)int row;
 @property(assign)int col;
 @property(assign)int index;
+@property(nonatomic, weak) UIView *sbView;
 @property(nonatomic, readonly) NSString *name;
 -(id)initWithName:(NSString*)name;
 -(void)go:(id)sender;

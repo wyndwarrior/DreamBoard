@@ -45,6 +45,20 @@
 -(UIView *)loadView:(NSMutableDictionary *)dict;
 -(id)initWithName:(NSString*)name window:(UIView *)_window;
 -(id)findApp:(NSString*)app;
+
+-(id)getView:(NSString *)name;
+-(void)addView:(NSString *)name view:(UIView *)view;
+-(void)removeView:(NSString *)name;
+-(BOOL)viewIsInteractive:(NSString *)name;
+-(BOOL)toggle:(NSString *)name;
+-(id)getFunction:(NSString *)name;
+
+-(NSMutableArray *)allAppIcons;
+
+-(void)setVariable:(NSString *)name value:(id)val;
+-(id)getVariable:(NSString *)name;
+-(NSMutableDictionary *)getDynamicView:(NSString *)name;
+
 -(void)loadTheme;
 -(void)savePlist;
 -(void)cacheIfNeeded;

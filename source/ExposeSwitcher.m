@@ -69,12 +69,10 @@ static const int NUM  = 9;
     self.view.userInteractionEnabled = NO;
 	NSMutableArray *ray = [[[NSFileManager defaultManager] contentsOfDirectoryAtPath:scanPath error:NULL] mutableCopy];
     
-    //@Custom
     if([ray containsObject:@"Default"]){
 		[ray removeObject:@"Default"];
 		[ray insertObject:@"Default" atIndex:0];
 	}
-    //@End Custom
     
     int index = 0;
 	for(int i = 0; i<(int)ray.count; i++)
@@ -133,11 +131,17 @@ static const int NUM  = 9;
     int c = theme.col;
     mainScrollView.contentOffset = CGPointMake(index/NUM*bounds.size.width,0);
     
-    [self.view addSubview:background];
-    [self.view addSubview:shadow];
+    if( ![[DreamBoard sharedInstance] sbView]){
+        [self.view addSubview:background];
+        [self.view addSubview:shadow];
+    }
     [self.view addSubview:mainScrollView];
     [self.view addSubview:pagectrl];
-    [self.view addSubview:previewImage];
+    
+    if( !([theme.name isEqualToString:@"Default"] && [[DreamBoard sharedInstance] sbView] ) )
+        [self.view addSubview:previewImage];
+    else
+        [theme layoutSubviews];
     
     [self updatePages];
 
@@ -145,9 +149,10 @@ static const int NUM  = 9;
     mainScrollView.layer.anchorPoint = CGPointMake((x[r][c]+width/2)/bounds.size.width,(y[r][c]+height/2)/bounds.size.height);
     animationkey = 0;
     [UIView beginAnimations:nil context:nil];   
-    [UIView setAnimationDuration:.5];
+    [UIView setAnimationDuration:.3];
     [UIView setAnimationDelegate:self]; 
     [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     previewImage.alpha = 1;
     [UIView commitAnimations];
 }
@@ -171,9 +176,10 @@ static const int NUM  = 9;
         mainScrollView.hidden = NO;
         animationkey = 1;
         [UIView beginAnimations:nil context:nil];   
-        [UIView setAnimationDuration:.75];
+        [UIView setAnimationDuration:.7];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         ExposeSwitcherObject* theme = switcherObjects[previewImage.tag];
         int r = [theme row];
         int c = [theme col];
@@ -190,6 +196,7 @@ static const int NUM  = 9;
         [UIView setAnimationDuration:.3];
         [UIView setAnimationDelegate:self]; 
         [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         previewImage.alpha = 0;
         [UIView commitAnimations];
     }
@@ -209,9 +216,10 @@ static const int NUM  = 9;
         if ([delegate respondsToSelector:@selector(didSelectObject:view:)])
             [delegate didSelectObject:[switcherObjects[previewImage.tag] name] view:self];
         [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:.5];
+        [UIView setAnimationDuration:.3];
         [UIView setAnimationDelegate:self]; 
         [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         previewImage.alpha = 0;
         [UIView commitAnimations];
     }else if(animationkey==4){
@@ -258,7 +266,10 @@ static const int NUM  = 9;
     previewImage.image = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/%@/Preview.png", scanPath,[theme name]]];
     previewImage.tag = theme.index;
     previewImage.alpha = 1;
-    [self.view addSubview:previewImage];
+    if( !([theme.name isEqualToString:@"Default"] && [[DreamBoard sharedInstance] sbView] ) )
+        [self.view addSubview:previewImage];
+    else
+        [theme layoutSubviews];
     mainScrollView.layer.anchorPoint = CGPointMake(.5,.5);
     mainScrollView.frame = bounds;
     mainScrollView.transform = CGAffineTransformMakeScale(bounds.size.width/width, bounds.size.height/height);
@@ -269,9 +280,10 @@ static const int NUM  = 9;
     if([delegate respondsToSelector:@selector(aboutToZoomIn:)])
         [delegate aboutToZoomIn:theme];
     [UIView beginAnimations:nil context:nil];   
-    [UIView setAnimationDuration:.75];
+    [UIView setAnimationDuration:.7];
     [UIView setAnimationDelegate:self]; 
     [UIView setAnimationDidStopSelector:@selector(animationDidFinish)];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     mainScrollView.transform = CGAffineTransformMakeScale(bounds.size.width/width, bounds.size.height/height);
     mainScrollView.frame = stretch;
     pagectrl.alpha=0;

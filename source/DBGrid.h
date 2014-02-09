@@ -2,32 +2,20 @@
 #import "DreamBoard.h"
 #import "DBAppIcon.h"
 @class DBAppIcon;
-@interface DBGrid : UIScrollView <UIScrollViewDelegate> {
-    NSMutableDictionary *dict;
-    NSMutableArray *appsArray;
-    
-    int ROWS, COLS, GAPX, GAPY, PAGEGAPX, PAGEGAPY;
-    
-    UIImage *shadowImage;
-    UIImage *maskImage;
-    UIImage *overlayImage;
-    UIImage *editImage;
-    UIImage *badgeImage;
-}
-@property(nonatomic, strong) NSMutableDictionary *dict;
-@property(nonatomic, strong) NSMutableArray *appsArray;
+@interface DBGrid : UIScrollView <UIScrollViewDelegate>
 
-@property(nonatomic, strong) UIImage *shadowImage;
-@property(nonatomic, strong) UIImage *maskImage;
-@property(nonatomic, strong) UIImage *overlayImage;
-@property(nonatomic, strong) UIImage *editImage;
-@property(nonatomic, strong) UIImage *badgeImage;
+@property(nonatomic, weak) UIImage *shadowImage;
+@property(nonatomic, weak) UIImage *maskImage;
+@property(nonatomic, weak) UIImage *overlayImage;
+@property(nonatomic, weak) UIImage *editImage;
+@property(nonatomic, weak) UIImage *badgeImage;
 
 - (id)initWithDict:(NSMutableDictionary *)_dict;
++ (id)find:(NSString*)appIcon;
+
 - (void)loadGrid;
-+ (id)find:(NSString*)goal;
 - (void)unloadAll;
--(void)scrollViewDidScroll:(UIScrollView *)scrollView;
--(void)addTo:(NSString *)bundle sender:(DBAppIcon*)sender;
--(void)doActions;
+
+- (void)addTo:(NSString *)bundle sender:(DBAppIcon*)sender;
+- (void)doActions;
 @end

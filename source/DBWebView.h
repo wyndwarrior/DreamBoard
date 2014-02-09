@@ -1,7 +1,5 @@
 #import "prefix.h"
 #import "DreamBoard.h"
 
-@interface DBWebView : UIWebView {
-    NSTimer *timer;
-}
+@interface DBWebView : UIWebView
 @end
