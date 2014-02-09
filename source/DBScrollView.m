@@ -1,7 +1,6 @@
 #import "DBScrollView.h"
 
 @implementation DBScrollView
-@synthesize actions;
 
 - (id)init
 {

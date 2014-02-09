@@ -1,4 +1,4 @@
-#import "prefix.h"
+#import "DBPrefix.h"
 
 #import "DBActionParser.h"
 @interface DBScrollView : UIScrollView <UIScrollViewDelegate>

@@ -1,4 +1,4 @@
-#import "prefix.h"
+#import "DBPrefix.h"
 #import "DreamBoard.h"
 #import "DBAppIcon.h"
 #import "DBGrid.h"

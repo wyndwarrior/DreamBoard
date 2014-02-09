@@ -1,8 +1,8 @@
 #import "DBActionParser.h"
 
-
 @interface DBActionParser ()
 //private methods
+
 
 +(BOOL)parseStringAction:(NSString *)action;
 +(BOOL)parseBlockAction:(NSDictionary *)action;

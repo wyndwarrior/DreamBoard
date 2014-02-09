@@ -1,4 +1,4 @@
-#import "prefix.h"
+#import "DBPrefix.h"
 #import "DreamBoard.h"
 
 @interface DBWebView : UIWebView

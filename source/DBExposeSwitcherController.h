@@ -1,4 +1,4 @@
-#import "prefix.h"
+#import "DBPrefix.h"
 #import <Foundation/Foundation.h>
 #import "ExposeSwitcher.h"
 

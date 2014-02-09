@@ -2,6 +2,7 @@
 extern "C" void UIKeyboardDisableAutomaticAppearance();
 
 @implementation DBTheme
+
 @synthesize isEditing, mainView = mainView;
 - (id)initWithName:(NSString *)name window:(UIView *)_window
 {

@@ -7,6 +7,7 @@
 
 @end
 
+
 @implementation DBLoadingView
 @synthesize label;
 -(id)initWithFrame:(CGRect)frame{

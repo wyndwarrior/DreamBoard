@@ -1,4 +1,4 @@
-#import "prefix.h"
+#import "DBPrefix.h"
 #import "DBAppIcon.h"
 
 @interface DBAppSelectionTable : UIView <UITableViewDelegate, UITableViewDataSource>

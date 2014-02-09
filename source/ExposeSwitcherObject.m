@@ -2,6 +2,7 @@
 
 
 @implementation ExposeSwitcherObject
+
 @synthesize row, col, index, name;
 
 - (id)initWithName:(NSString*)_name;

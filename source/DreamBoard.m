@@ -2,6 +2,7 @@
 
 @implementation DreamBoard
 static DreamBoard *sharedInstance;
+
 @synthesize appsArray, hiddenSet, isEditing, window, cachePath, scanPath, backgroundPath, shadowPath, shadowImagePath, dbtheme;
 
 - (id)init

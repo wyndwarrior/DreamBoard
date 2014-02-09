@@ -1,4 +1,4 @@
-#import "prefix.h"
+#import "DBPrefix.h"
 
 @interface DBLoadingView : UIView
 

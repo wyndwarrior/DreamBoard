@@ -4,6 +4,7 @@
 
 @synthesize scanPath, cachePath, current, backgroundPath, shadowPath, delegate;
 
+
 static NSString *shadowImagePath;
 static UIImage *shadowImage;
 static ExposeSwitcher *sharedInstance;

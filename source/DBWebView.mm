@@ -9,6 +9,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 
 @end
 
+
 @implementation DBWebView
 
 -(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {	

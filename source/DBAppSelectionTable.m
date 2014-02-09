@@ -7,6 +7,7 @@
 
 @end
 
+
 @implementation DBAppSelectionTable
 
 +(DBAppSelectionTable *)sharedTable{

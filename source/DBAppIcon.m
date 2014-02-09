@@ -5,6 +5,7 @@
     BOOL touchBegan;
 }
 
+
 @property(nonatomic, strong) UILabel *iconLabel;
 @property(nonatomic, strong) UIImageView *shadowImageView;
 @property(nonatomic, strong) UIImageView *overlayImageView;
