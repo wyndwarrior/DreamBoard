@@ -1,8 +1,7 @@
 #import "DBLockView.h"
 @implementation DBLockView
-@synthesize delegate;
 -(void)removeFromSuperview{
     [super removeFromSuperview];
-    [delegate didRemoveFromSuperview];
+    [self.delegate didRemoveFromSuperview];
 }
 @end

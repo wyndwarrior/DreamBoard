@@ -3,6 +3,12 @@
 extern "C" void UIKeyboardEnableAutomaticAppearance();
 extern "C" void UIKeyboardDisableAutomaticAppearance();
 
+@interface DBWebView ()
+
+@property(nonatomic, strong) NSTimer *timer;
+
+@end
+
 @implementation DBWebView
 
 -(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {	
@@ -10,8 +16,8 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     if(theView){
         if( !SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ){
             UIKeyboardEnableAutomaticAppearance();
-            if(!timer)
-                timer = [NSTimer scheduledTimerWithTimeInterval:1 
+            if(!self.timer)
+                self.timer = [NSTimer scheduledTimerWithTimeInterval:1
                                                          target:self 
                                                        selector:@selector(hideKb) 
                                                        userInfo:nil
@@ -25,14 +31,14 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     if([[UIKeyboard activeKeyboard] delegate]!=nil && [[[[UIKeyboard activeKeyboard] delegate] description] hasPrefix:@"<<UIThreadSafeNode"])return;
     if( !SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") )
         UIKeyboardDisableAutomaticAppearance();
-    [timer invalidate];
-    timer = nil;
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 
 - (void)dealloc
 {
-    [timer invalidate];
+    [self.timer invalidate];
 }
 
 @end

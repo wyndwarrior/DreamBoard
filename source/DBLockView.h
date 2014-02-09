@@ -1,7 +1,7 @@
 #import "prefix.h"
 
 #import "DBTheme.h"
-@interface DBLockView : UIView {
-}
+@interface DBLockView : UIView
 @property(nonatomic, weak) id delegate;
+
 @end

@@ -11,30 +11,25 @@ static DreamBoard *sharedInstance;
         appsArray = [[NSMutableArray alloc] init];
         hiddenSet = [[NSMutableSet alloc] init];
         
-        {
-            NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/LibHide/hidden.plist"];
-            NSArray *hideMe = @[@"com.apple.AdSheetPhone", @"com.apple.DataActivation", @"com.apple.DemoApp", @"com.apple.iosdiagnostics", @"com.apple.iphoneos.iPodOut", @"com.apple.TrustMe", @"com.apple.WebSheet"];
-            [hiddenSet addObjectsFromArray:hideMe];
-            if(dict && dict[@"Hidden"]){
-                [hiddenSet addObjectsFromArray:dict[@"Hidden"]];
-            }
+        NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/LibHide/hidden.plist"];
+        NSArray *hideMe = @[@"com.apple.AdSheetPhone", @"com.apple.DataActivation", @"com.apple.DemoApp", @"com.apple.iosdiagnostics", @"com.apple.iphoneos.iPodOut", @"com.apple.TrustMe", @"com.apple.WebSheet", @"com.apple.appleaccount.AACredentialRecoveryDialog", @"com.apple.AccountAuthenticationDialog", @"com.apple.CompassCalibrationViewService", @"com.apple.Copilot", @"com.apple.datadetectors.DDActionsService", @"com.apple.FacebookAccountMigrationDialog", @"com.apple.fieldtest", @"com.apple.gamecenter.GameCenterUIService", @"com.apple.iad.iAdOptOut", @"com.apple.ios.StoreKitUIService", @"com.apple.MailCompositionService", @"com.apple.mobilesms.compose", @"com.apple.MusicUIService", @"com.apple.quicklook.quicklookd", @"com.apple.PassbookUIService", @"com.apple.purplebuddy", @"com.apple.SiriViewService", @"com.apple.social.remoteui.SocialUIService", @"com.apple.WebContentFilter.remoteUI.WebContentAnalysisUI", @"com.apple.WebViewService"];
+        [hiddenSet addObjectsFromArray:hideMe];
+        if(dict && dict[@"Hidden"]){
+            [hiddenSet addObjectsFromArray:dict[@"Hidden"]];
         }
-        
-        {
-            prefsPath = [[NSMutableDictionary alloc] init];
+        prefsPath = [[NSMutableDictionary alloc] init];
 
-            prefsPath[@"Path"] = @"/var/mobile/Library/Preferences/com.wynd.dreamboard.plist";
+        prefsPath[@"Path"] = @"/var/mobile/Library/Preferences/com.wynd.dreamboard.plist";
+        
+        prefsDict = [[[NSDictionary alloc] initWithContentsOfFile:prefsPath[@"Path"]] mutableCopy];
+        
+        if( !prefsDict )
+            prefsDict = [NSMutableDictionary dictionary];
+        
+        prefsPath[@"Prefs"] = prefsDict;
             
-            NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:prefsPath[@"Path"]];
-            if(dict){
-                prefsDict = [dict mutableCopy];
-            }
-            
-            if( !prefsDict )
-                prefsDict = [NSMutableDictionary dictionary];
-            
-            prefsPath[@"Prefs"] = prefsDict;
-        }
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(rotateView:)
+                                                     name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
     }
     
     return self;
@@ -45,7 +40,33 @@ static DreamBoard *sharedInstance;
     return sharedInstance;
 }
 
+-(void)rotateView:(NSNotification *)notification {
+    UIInterfaceOrientation _ori = [[[notification userInfo] objectForKey:UIApplicationStatusBarOrientationUserInfoKey] intValue];
+    ori = _ori;
+    [self setOrientation];
+}
 
+-(void)setOrientation{
+    if( self.sbView && self.dbtheme) {
+        UIView *view = dbtheme.mainView;
+        CGAffineTransform t = CGAffineTransformIdentity;
+        
+        if(ori == UIInterfaceOrientationPortraitUpsideDown)
+            t = CGAffineTransformMakeRotation(M_PI);
+        else if(ori == UIInterfaceOrientationLandscapeLeft)
+            t = CGAffineTransformMakeRotation(M_PI/2);
+        else if(ori == UIInterfaceOrientationLandscapeRight)
+            t = CGAffineTransformMakeRotation(-M_PI/2);
+        
+        [UIView animateWithDuration:.4 animations:^{
+            view.transform = t;
+            CGRect rect = view.frame;
+            rect.origin.x = 0;
+            rect.origin.y = 0;
+            view.frame = rect;
+        }];
+    }
+}
 
 -(void)show{
     window.userInteractionEnabled = NO;
@@ -86,9 +107,30 @@ static DreamBoard *sharedInstance;
     [self showAllExcept:view.view];
     [self loadTheme:object];
     [loading hide];
+    [self returnSbView];
 }
 -(void)didFinishSelection:(ExposeSwitcher *)view{
     window.userInteractionEnabled = YES;
+}
+
+-(UIView *)removeSbView{
+    if( self.sbView){
+        self.sbSuperview = self.sbView.superview;
+        [self.sbView removeFromSuperview];
+        self.sbViewFrame = self.sbView.frame;
+        self.sbView.clipsToBounds = YES;
+    }
+    return self.sbView;
+}
+
+-(void)returnSbView{
+    if(self.sbSuperview){
+        [self.sbSuperview addSubview:self.sbView];
+        self.sbView.transform = CGAffineTransformIdentity;
+        self.sbView.frame = self.sbViewFrame;
+        self.sbSuperview = nil;
+        self.sbView.clipsToBounds = NO;
+    }
 }
 
 -(void)didFadeOut:(ExposeSwitcher *)view{
@@ -102,6 +144,10 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)hideAllExcept:(UIView *)view{
+    if( self.sbView){
+        if( self.dbtheme )
+            [self.dbtheme.mainView removeFromSuperview];
+    }
     if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(hidden)return;
     for(UIView *_view in window.subviews)
@@ -112,6 +158,10 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)showAllExcept:(UIView *)_view{
+    if( self.sbView){
+        if( self.dbtheme )
+            [self.sbView addSubview:self.dbtheme.mainView];
+    }
     if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(!hidden)return;
     for(UIView *view in window.subviews)
@@ -149,6 +199,7 @@ static DreamBoard *sharedInstance;
         [UIView commitAnimations];
     }
 }
+
 -(void)showSwitcher{
     if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(dbtheme){
@@ -158,6 +209,7 @@ static DreamBoard *sharedInstance;
         [UIView commitAnimations];
     }
 }
+
 -(void)toggleSwitcher{
     if( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0") ) return;
     if(dbtheme){
@@ -167,6 +219,7 @@ static DreamBoard *sharedInstance;
         [self showSwitcher];
     }
 }
+
 -(void)startEditing{
     isEditing = YES;
     dbtheme.isEditing = YES;
@@ -179,6 +232,7 @@ static DreamBoard *sharedInstance;
             [app loadIcon:YES shouldCache:NO];
         }
 }
+
 -(void)stopEditing{
     isEditing = NO;
     dbtheme.isEditing = NO;
@@ -190,6 +244,7 @@ static DreamBoard *sharedInstance;
         }
     [dbtheme savePlist];
 }
+
 -(void)updateBadgeForApp:(NSString*)leafIdentifier{
     if(dbtheme)
     for(DBAppIcon *app in dbtheme->allAppIcons)
@@ -198,6 +253,7 @@ static DreamBoard *sharedInstance;
             [app loadIcon:dbtheme.isEditing shouldCache:NO];
         }
 }
+
 -(void)loadTheme:(NSString*) theme{
     if([theme isEqualToString:self.currentTheme])return;
     if([theme isEqualToString:@"Default"]){
@@ -210,16 +266,18 @@ static DreamBoard *sharedInstance;
     }
     if(dbtheme)[self unloadTheme];
     currentTheme = theme;
+    [self returnSbView];
     if( self.sbView)
         dbtheme = [[DBTheme alloc] initWithName:theme window:self.sbView];
     else
         dbtheme = [[DBTheme alloc] initWithName:theme window:window];
-    if(isEditing)
-    dbtheme.isEditing = YES;
+    dbtheme.isEditing = isEditing;
     [dbtheme loadTheme];
+    [self setOrientation];
     prefsPath[@"Prefs"][@"Current Theme"] = theme;
     [prefsPath[@"Prefs"] writeToFile:prefsPath[@"Path"] atomically:YES];
 }
+
 -(void)unloadTheme{
     window.userInteractionEnabled = NO;
     if(dbtheme){
@@ -265,7 +323,9 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)reLayout{
-    if( self.dbtheme ){
+    if( self.dbtheme && !self.sbSuperview){
+        if( ![self.sbView.subviews containsObject:self.dbtheme.mainView])
+            [self.sbView addSubview:self.dbtheme.mainView];
         [self.sbView bringSubviewToFront:self.dbtheme.mainView];
     }
 }
@@ -277,9 +337,40 @@ static DreamBoard *sharedInstance;
         [self.sbuicontroller launchIcon:app fromLocation:0];
 }
 
+-(void)launchBundleId:(NSString *)bundle{
+    for(int i = 0; i<appsArray.count; i++)
+        if([[appsArray[i] leafIdentifier] isEqualToString:bundle]){
+            [self launch:appsArray[i]];
+            break;
+        }
+}
+
 -(void)preLoadTheme{
     if(![prefsPath[@"Prefs"][@"Current Theme"] isEqualToString:@"Default"])
         [self loadTheme:prefsPath[@"Prefs"][@"Current Theme"]];
+}
+
+-(void)unlockDevice{
+    id ac =[objc_getClass("SBAwayController") sharedAwayController];
+    if([ac respondsToSelector:@selector(unlockWithSound:isAutoUnlock:)])
+        [ac unlockWithSound:YES isAutoUnlock:NO];
+    else if( [ac respondsToSelector:@selector(_unlockWithSound:isAutoUnlock:)] )
+        [ac _unlockWithSound:YES isAutoUnlock:NO];
+    else if( [ac respondsToSelector:@selector(unlockWithSound:)] )
+        [ac unlockWithSound:YES];
+    else{
+#ifdef TARGET_THEOS
+        id lc = [objc_getClass("SBLockScreenManager") sharedInstance];
+        if( [lc respondsToSelector:@selector(startUIUnlockFromSource:withOptions:)]){
+            [lc startUIUnlockFromSource:0 withOptions:nil];
+            _Bool unlocked = false;
+            if( [lc respondsToSelector:@selector(isUILocked)])
+                unlocked = ![lc isUILocked];
+            if( !unlocked && [lc respondsToSelector:@selector(applicationRequestedDeviceUnlock)])
+                [lc applicationRequestedDeviceUnlock];
+        }
+#endif
+    }
 }
 
 -(void)save:(NSString *)theme{

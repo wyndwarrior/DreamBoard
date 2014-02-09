@@ -13,13 +13,8 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    if(actions)
-        [DBActionParser parseActionArray:actions];
-}
-
-- (void)dealloc
-{
-    self.delegate = nil;
+    if(self.actions)
+        [DBActionParser parseActionArray:self.actions];
 }
 
 @end

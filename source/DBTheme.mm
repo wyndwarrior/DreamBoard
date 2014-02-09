@@ -77,7 +77,7 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
     
     [self cacheIfNeeded];
     
-    self.mainView = [[UIView alloc] initWithFrame:window.frame];
+    self.mainView = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.mainView.backgroundColor = UIColor.blackColor;
     self.mainView.clipsToBounds = YES;
     if(dictTheme[@"MainView"]){
@@ -377,9 +377,59 @@ extern "C" void UIKeyboardDisableAutomaticAppearance();
 -(void)didDim{
     if(lockView)[lockView removeFromSuperview];
 }
+-(id)getView:(NSString *)name{
+    if( [name isEqualToString:@"MainView"])
+        return mainView;
+    return dictViews[name];
+}
+-(void)addView:(NSString *)name view:(UIView *)view{
+    dictViews[name] = view;
+}
+
+-(void)removeView:(NSString *)name{
+    [dictViews removeObjectForKey:name];
+}
+
+-(BOOL)viewIsInteractive:(NSString *)name{
+    if( dictViewsInteraction[name] )
+        return [dictViewsInteraction[name] boolValue];
+    return YES;
+}
+
+-(BOOL)toggle:(NSString *)name{
+    if ([dictViewsToggled[name] boolValue]){
+        dictViewsToggled[name]= @YES;
+        return YES;
+    }else{
+        dictViewsToggled[name]= @NO;
+        return NO;
+    }
+}
+-(void)setVariable:(NSString *)name value:(id)val{
+    dictVars[name] = val;
+}
+
+-(id)getVariable:(NSString *)name{
+    return dictVars[name];
+}
+
+-(id)getFunction:(NSString *)name{
+    return functions[name];
+}
+
+-(NSMutableDictionary *)getDynamicView:(NSString *)name{
+    NSMutableDictionary *dict = [dictDynViews[name] mutableCopy];
+    if( ! dict ) return dict;
+    dictDynViews[name] = dict;
+    return dict;
+}
 
 -(void)didRemoveFromSuperview{
     lockView = nil;
+}
+
+-(NSMutableArray*)allAppIcons{
+    return allAppIcons;
 }
 
 @end

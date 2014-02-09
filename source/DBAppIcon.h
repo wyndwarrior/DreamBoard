@@ -3,39 +3,18 @@
 #import "DreamBoard.h"
 
 @class DBGrid;
-@interface DBAppIcon : UIView {
-    id application;
-    UIImage *shadowImage;
-    UIImage *maskImage;
-    UIImage *overlayImage;
-    UIImage *editImage;
-    UIImage *badgeImage;
-    
-    UILabel *iconLabel;
-    UIButton *iconButton;
-    UIImageView *shadowImageView;
-    UIImageView *overlayImageView;
-    UIImageView *editImageView;
-    UIImageView *iconImageView;
-    UIView *badge;
-    
-    NSMutableDictionary *dict;
-    NSDictionary *labelStyle;
-    
-    CGRect theFrame;
-    BOOL loaded, hasCache;
-    int cacheWidth, cacheHeight;
-}
+@interface DBAppIcon : UIView
+
 @property(nonatomic, strong) NSMutableDictionary *dict;
-@property(nonatomic, strong) UIImage *shadowImage;
-@property(nonatomic, strong) UIImage *maskImage;
-@property(nonatomic, strong) UIImage *overlayImage;
-@property(nonatomic, strong) UIImage *editImage;
-@property(nonatomic, strong) UIImage *badgeImage;
-@property(nonatomic, strong) id application;
 @property(nonatomic, strong) NSDictionary *labelStyle;
+@property(nonatomic, weak) DBGrid* grid;
+@property(nonatomic, weak) UIImage *shadowImage;
+@property(nonatomic, weak) UIImage *maskImage;
+@property(nonatomic, weak) UIImage *overlayImage;
+@property(nonatomic, weak) UIImage *editImage;
+@property(nonatomic, weak) UIImage *badgeImage;
+@property(nonatomic, weak) id application;
 @property(nonatomic, readonly) BOOL loaded;
-@property(nonatomic, weak) DBGrid*grid;
 
 @property(nonatomic, assign) int cacheWidth;
 @property(nonatomic, assign) int cacheHeight;
