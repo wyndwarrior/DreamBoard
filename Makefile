@@ -1,7 +1,9 @@
-export ARCHS=armv7 arm64 armv7s
-export SOURCE=src
-ADDITIONAL_OBJCFLAGS = -fobjc-arc
-TARGET_IPHONEOS_DEPLOYMENT_VERSION = 5.0
+export ARCHS = armv7 arm64 armv7s
+export SOURCE = src
+export THEOS = theos
+export TARGET_IPHONEOS_DEPLOYMENT_VERSION = 5.0
+
+export ADDITIONAL_OBJCFLAGS = -fobjc-arc
 
 include $(THEOS)/makefiles/common.mk
 
