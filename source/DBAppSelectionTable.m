@@ -39,9 +39,9 @@
 -(void)setTitle:(NSString *)title{
     UINavigationItem *item = [[UINavigationItem alloc] initWithTitle:@""];
     UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-																	style:UIBarButtonItemStyleBordered target:self action:@selector(cancel)];
+																	style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
 	UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"No Icon"
-                                                                   style:UIBarButtonItemStyleBordered target:self action:@selector(none)];
+                                                                   style:UIBarButtonItemStylePlain target:self action:@selector(none)];
 	item.rightBarButtonItem = rightButton;
 	item.leftBarButtonItem = leftButton;
 	item.hidesBackButton = YES;

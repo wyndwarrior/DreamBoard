@@ -1,5 +1,3 @@
-*.class
-*.jar
-*.war
-*.ear
+*.o
+/obj
 .DS_Store
