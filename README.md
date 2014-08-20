@@ -8,7 +8,7 @@ Features
 - Loads themes from XML layout files
 - Custom script parser for interaction
 - No setup necessary. Easily switch between themes without any hassle
-- Interactive widgets, dyanmic layouts
+- Interactive widgets, dynamic layouts
 
 ![DreamBoard](img/animate.gif)
 
