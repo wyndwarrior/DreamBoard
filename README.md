@@ -1,18 +1,28 @@
-DreamBoard
-=============
+![DreamBoard](img/preview.png)
 
-Dreamboard is a powerful theming platform for jailbroken iPhones featuring simplicity, interactive elements, and dynamic layouts.
+Dreamboard is a powerful iOS theming platform
 
-General Use
------------
-Dreamboard is built on Mac OS X using theos (http://iphonedevwiki.net/index.php/Theos/Getting_Started)
+Features
+----------
+- Uses objc-runtime to hook onto system methods and extend functionality
+- Loads themes from XML layout files
+- Custom script parser for interaction
+- Easily switch between themes without any hassle
 
+![DreamBoard](img/animate.gif)
 
-### XML Layout
-The DBTheme class loads views, buttons, images, widgets, etc. specified by an XML layout file.
+Building
+----------
+Requires Xcode and Xcode Command Line Tools.
 
-### Custom Script Parser
-The DBActionParser class handles custom interaction between views, maintains variables, and executes user-defined functions.
+```sh
+git clone 'https://github.com/wyndwarrior/DreamBoard.git'
+cd DreamBoard
+git submodule update --init --recursive
+make
+```
 
-### Tweak.xm
-DreamBoard uses CydiaSubstrate to dynamically overwrite iOS functions.
+License
+--------
+
+Copyright 2014 Yu Xuan Liu. All rights reserved. Content licensed under the [GNU General Public License v3.0](LICENSE)
