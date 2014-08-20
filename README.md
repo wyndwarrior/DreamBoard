@@ -7,7 +7,8 @@ Features
 - Uses objc-runtime to hook onto system methods and extend functionality
 - Loads themes from XML layout files
 - Custom script parser for interaction
-- Easily switch between themes without any hassle
+- No setup necessary. Easily switch between themes without any hassle
+- Interactive widgets, dyanmic layouts
 
 ![DreamBoard](img/animate.gif)
 
