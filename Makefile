@@ -1,5 +1,5 @@
 export ARCHS=armv7 arm64 armv7s
-export SOURCE=source
+export SOURCE=src
 ADDITIONAL_OBJCFLAGS = -fobjc-arc
 TARGET_IPHONEOS_DEPLOYMENT_VERSION = 5.0
 
