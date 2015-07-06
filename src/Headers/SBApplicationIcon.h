@@ -20,6 +20,8 @@
 - (BOOL)canGenerateGhostlyImageInBackground;	// 0x250b1
 - (id)generateIconImage:(int)image;	// 0x259a9
 - (id)displayName;	// 0x252e5
+- (id)db_displayName;
+-(id)displayNameForLocation:(int)arg1 ;
 - (id)leafIdentifier;	// 0x250b5
 - (BOOL)canEllipsizeLabel;	// 0x25375
 - (id)tags;	// 0x253a9

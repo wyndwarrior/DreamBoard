@@ -48,9 +48,9 @@ static NSString *cache;
     
     if(self.application && !self.hasCache){
         UIImage *iconImage = nil;
-        BOOL isCustom = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Icons/%@.png", MAINPATH, [DreamBoard sharedInstance].currentTheme, [self.application displayName]]];
+        BOOL isCustom = [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/DreamBoard/%@/Icons/%@.png", MAINPATH, [DreamBoard sharedInstance].currentTheme, [self.application db_displayName]]];
         if (isCustom)
-            iconImage = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/Icons/%@.png", MAINPATH, [DreamBoard sharedInstance].currentTheme, [self.application displayName]]];
+            iconImage = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/DreamBoard/%@/Icons/%@.png", MAINPATH, [DreamBoard sharedInstance].currentTheme, [self.application db_displayName]]];
         else
             iconImage = [self.application getIconImage:2];
         if(self.maskImage!=nil && !isCustom)
@@ -88,7 +88,7 @@ static NSString *cache;
         self.iconLabel.textColor = [UIColor whiteColor];
         self.iconLabel.textAlignment = NSTextAlignmentCenter;
         self.iconLabel.backgroundColor = [UIColor clearColor];
-        self.iconLabel.text = [self.application displayName];
+        self.iconLabel.text = [self.application db_displayName];
         self.iconLabel.userInteractionEnabled = NO;
         
         [self addSubview:self.iconLabel];
@@ -227,7 +227,7 @@ static NSString *cache;
         table.frame = CGRectMake(bounds.origin.x, bounds.origin.y+20, bounds.size.width, bounds.size.height-20);
         table.tableData = [DreamBoard sharedInstance].appsArray;
         table.delegate = self;
-        [table setTitle:(self.application==nil?@"No Icon":[self.application displayName])];
+        [table setTitle:(self.application==nil?@"No Icon":[self.application db_displayName])];
         
         [[DreamBoard sharedInstance].window addSubview:table];
     }

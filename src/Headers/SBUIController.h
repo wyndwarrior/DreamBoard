@@ -9,4 +9,5 @@
 -(void)activateApplicationFromSwitcher:(SBApplication *)application;
 -(void)_launchIcon:(id)arg1;
 -(void)launchIcon:(id)arg1 fromLocation:(int)arg2;
+-(void)launchIcon:(id)arg1 fromLocation:(int)arg2 context:(id)arg3;
 @end

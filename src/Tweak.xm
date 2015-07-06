@@ -15,6 +15,18 @@
 %end
 
 %hook SBApplicationIcon
+
+
+%new
+-(id)db_displayName{
+    if([self respondsToSelector:@selector(displayName)]) {
+        return [self displayName];
+    } else if([self respondsToSelector:@selector(displayNameForLocation:)]) {
+        return [self displayNameForLocation:0];
+    }
+    return nil;
+}
+
 -(void)launch{
     [[DreamBoard sharedInstance] showAllExcept:nil];
 	if(![[[self application] bundleIdentifier] isEqualToString:@"com.wynd.dreamboard"]){
@@ -32,7 +44,7 @@
 		if([[[DreamBoard.sharedInstance.appsArray objectAtIndex:i] leafIdentifier] isEqualToString:[self leafIdentifier]]){
 			[DreamBoard.sharedInstance.appsArray replaceObjectAtIndex:i withObject:self];
 			return self;
-		}else if([[[DreamBoard.sharedInstance.appsArray objectAtIndex:i] displayName] caseInsensitiveCompare:[self displayName]]==NSOrderedDescending)
+		}else if([[[DreamBoard.sharedInstance.appsArray objectAtIndex:i] db_displayName] caseInsensitiveCompare:[self db_displayName]]==NSOrderedDescending)
 			break;
 	[DreamBoard.sharedInstance.appsArray insertObject:self atIndex:i];
 	return self;
@@ -80,6 +92,17 @@
 	}
 	[[DreamBoard sharedInstance] show];
 }
+
+-(void)launchIcon:(id)arg1 fromLocation:(int)arg2 context:(id)arg3{
+    
+    [[DreamBoard sharedInstance] showAllExcept:nil];
+    if(![[[arg1 application] bundleIdentifier] isEqualToString:@"com.wynd.dreamboard"]){
+        %orig;
+        return;
+    }
+    [[DreamBoard sharedInstance] show];
+}
+
 -(BOOL)clickedMenuButton{
 	if(DreamBoard.sharedInstance.isEditing){
 		[DreamBoard.sharedInstance stopEditing];

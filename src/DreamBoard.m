@@ -332,10 +332,17 @@ static DreamBoard *sharedInstance;
 }
 
 -(void)launch:(id)app{
-    if( [app respondsToSelector:@selector(launch)])
+    if( [app respondsToSelector:@selector(launch)]) {
         [app launch];
-    else
+    }
+    else if ([self.sbuicontroller respondsToSelector:@selector(launchIcon:fromLocation:)]) {
         [self.sbuicontroller launchIcon:app fromLocation:0];
+    }
+    else if ([self.sbuicontroller respondsToSelector:@selector(launchIcon:fromLocation:context:)]) {
+        [self.sbuicontroller launchIcon:app fromLocation:0 context:nil];
+    }else {
+        NSLog(@"Failed to launch app: %@", app);
+    }
 }
 
 -(void)launchBundleId:(NSString *)bundle{

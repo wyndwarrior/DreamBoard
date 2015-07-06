@@ -60,7 +60,7 @@
 	if (cell == nil)
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     NSUInteger row = [indexPath row];
-    cell.textLabel.text = [_tableData[row] displayName];
+    cell.textLabel.text = [_tableData[row] db_displayName];
     cell.detailTextLabel.text = [_tableData[row] leafIdentifier];
     cell.textLabel.font = [UIFont boldSystemFontOfSize:20];
     cell.detailTextLabel.font = [UIFont boldSystemFontOfSize:10];
