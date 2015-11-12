@@ -14,6 +14,17 @@
 }
 %end
 
+%hook SBIcon
+
+-(void)launchFromLocation:(int)arg1 context:(id)arg2{
+    if(![[[self application] bundleIdentifier] isEqualToString:@"com.wynd.dreamboard"]){
+        %orig;
+        return;
+    }
+    [[DreamBoard sharedInstance] show];
+}
+%end
+
 %hook SBApplicationIcon
 
 
